@@ -1,0 +1,84 @@
+.Combat {
+    height: 100%;
+    background: url("../images/stars5.jpg") no-repeat center center;
+    background-size: cover;
+}
+
+.Combat .ui .currentRound {
+    left: 0;
+    top: 0.5rem;
+    width: 100%;
+    height: 2rem;
+    text-align: center;
+    font-size: 2rem;
+}
+
+.Combat .ui .combatLog {
+    bottom: 0.5rem;
+    width: 50%;
+    left: 25%;
+    height: 4rem;
+    line-height: 0.6rem;
+    font-size: 0.6rem;
+    overflow-y: auto;
+}
+
+.Combat .ui .combatLog pre {
+    margin: 0;
+    font-family: inherit;
+}
+
+.Combat .ui .result {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.Combat .ui .resultDialog {
+    position: absolute;
+    top: calc(50% - 6rem);
+    left: calc(50% - 10rem);
+    background: rgba(255, 255, 255, 0.12);
+    width: 20rem;
+    height: 10rem;
+    color: white;
+    padding: 1rem;
+}
+
+.Combat .ui .resultDialog .winner {
+    font-size: 2.5rem;
+}
+
+.Combat .ui .resultDialog .exitButton {
+    position: absolute;
+    bottom: 1rem;
+    left: 0;
+    width: 100%;
+    font-size: 2rem;
+    text-align: center;
+    cursor: pointer;
+}
+
+.Combat .ui .commander {
+    position: absolute;
+    top: 0.5rem;
+    border: 1px solid #73ffbe;
+    width: 4rem;
+    height: 3.2rem;
+}
+
+.Combat .ui .commander img {
+    width: 100%;
+    height: 100%;
+}
+
+.Combat .ui .commander.lhs {
+    left: 0.5rem;
+}
+
+.Combat .ui .commander.rhs {
+    right: 0.5rem;
+}

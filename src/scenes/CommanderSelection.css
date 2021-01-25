@@ -1,0 +1,65 @@
+.CommanderSelection {
+    height: 100%;
+    background: url("../images/stars5.jpg") no-repeat center center;
+    background-size: cover;
+}
+
+.CommanderSelection .ui .commanderName {
+    left: 0;
+    bottom: 3rem;
+    width: 100%;
+    height: 3rem;
+    text-align: center;
+    font-size: 2.5rem;
+}
+
+.CommanderSelection .ui .sideBox {
+    top: calc(50% - 4.5rem);
+    height: 9rem;
+    width: 8rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.12);
+    font-size: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.CommanderSelection .ui .commanderStats {
+    left: 4rem;
+}
+
+.CommanderSelection .ui .commanderControls {
+    right: 4rem;
+}
+
+.CommanderSelection .ui .commanderDescription {
+    bottom: 0.5rem;
+    width: 50%;
+    left: 25%;
+    font-size: 0.75rem;
+}
+
+.CommanderSelection .ui .chevron {
+    position: absolute;
+    top: calc(50% - 2rem);
+    font-size: 3rem;
+    cursor: pointer;
+    user-select: none;
+}
+
+.CommanderSelection .ui .chevron.left {
+    left: 1rem;
+}
+
+.CommanderSelection .ui .chevron.left:before {
+    content: '<';
+}
+
+.CommanderSelection .ui .chevron.right {
+    right: 1rem;
+}
+
+.CommanderSelection .ui .chevron.right:before {
+    content: '>';
+}

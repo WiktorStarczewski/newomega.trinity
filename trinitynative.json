@@ -1,0 +1,20 @@
+{
+    "build": {
+        "out": "./newomega-native-out"
+    },
+    "application": {
+        "name": "New Omega",
+        "nativepackageid": "org.celrisen.newomega",
+        "icon": "./src/assets/images/logo.png",
+        "splashscreen": "./src/NewOmega_trans4.svg",
+        "intentscheme": {
+            "scheme": "https",
+            "path": "diddemo.trinity-tech.io",
+            "custom": "diddemo"
+        },
+        "version": {
+            "code": 12346,
+            "name": "1.2.3"
+        }
+    }
+}
