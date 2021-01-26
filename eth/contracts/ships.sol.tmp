@@ -1,0 +1,50 @@
+  Ship[] Ships = [
+    Ship({
+      cp: 2,
+      hp: 1000,
+      attack: ShipVariableStat({
+        base: 30,
+        variable: 5
+      }),
+      defence: 2,
+      speed: 4,
+      range: 4,
+      agility: 25
+    }),
+    Ship({
+      cp: 8,
+      hp: 4000,
+      attack: ShipVariableStat({
+        base: 100,
+        variable: 20
+      }),
+      defence: 12,
+      speed: 3,
+      range: 7,
+      agility: 15
+    }),
+    Ship({
+      cp: 10,
+      hp: 5000,
+      attack: ShipVariableStat({
+        base: 130,
+        variable: 10
+      }),
+      defence: 15,
+      speed: 2,
+      range: 8,
+      agility: 10
+    }),
+    Ship({
+      cp: 30,
+      hp: 10000,
+      attack: ShipVariableStat({
+        base: 200,
+        variable: 5
+      }),
+      defence: 20,
+      speed: 1,
+      range: 8,
+      agility: 0
+    })
+  ];

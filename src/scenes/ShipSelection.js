@@ -14,6 +14,7 @@ export const ShipSelection = (props) => {
     const [ scene, setScene ] = useState(null);
     const [ loadedMeshes, setLoadedMeshes ] = useState([]);
     const [ resourcesLoaded, setResourcesLoaded ] = useState(false);
+    const [ notEnoughShips, setNotEnoughShips ] = useState(false);
 
     const nextShip = () => {
         const newShip = currentShip + 1;
@@ -43,6 +44,8 @@ export const ShipSelection = (props) => {
             setSelectedShips(selectedShips); // TODO NEEDED?
             setCurrentCp(getCurrentCP(selectedShips));
         }
+
+        setNotEnoughShips(false);
     };
 
     const removeShip = () => {
@@ -141,6 +144,16 @@ export const ShipSelection = (props) => {
         });
     };
 
+    const checkEnoughShipsAndDone = () => {
+        const notEnoughShips = currentCp < props.maxCp;
+        setNotEnoughShips(notEnoughShips);
+        if (!notEnoughShips) {
+            onDone();
+        }
+    };
+
+    const shipAdderClassName = `addOrRemoveShip addShip ${notEnoughShips ? 'highlightOverModal' : ''}`;
+
     return (
         <div className="ShipSelection">
             <Engine antialias={true} adaptToDeviceRatio={true} canvasId="ship-selection">
@@ -175,7 +188,9 @@ export const ShipSelection = (props) => {
                         </div>
                     </div>
                     <div className="uiElement sideBox shipControls">
-                        <div className="addOrRemoveShip addShip" onClick={addShip}>+</div>
+                        <div className={shipAdderClassName} onClick={addShip}>
+                            +
+                        </div>
                         <div>
                             Max CP: <span className="maxCp">{props.maxCp}</span>
                         </div>
@@ -197,7 +212,7 @@ export const ShipSelection = (props) => {
                     </div>
                     <div className="uiElement chevron left" onClick={prevShip}/>
                     <div className="uiElement chevron right" onClick={nextShip}/>
-                    <div className="uiElement doneBox" onClick={onDone}>
+                    <div className="uiElement doneBox" onClick={checkEnoughShipsAndDone}>
                         DONE
                     </div>
                     <a className="miniLogoBox" href="/">
@@ -215,6 +230,27 @@ export const ShipSelection = (props) => {
                             </div>
                             <div className="tip">
                                 3. The Attacker selects a fleet, the total CP of which can not exceed the total CP of the Defender.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            {notEnoughShips &&
+                <div className="modal">
+                    <div className="modal-popup">
+                        <div className="modal-body">
+                            <div className="modal-title">You can still add ships to your fleet, Admiral!</div>
+                            <div>Tip: Add ships to your fleet with the + button to the right of ship portrait.</div>
+                        </div>
+                        <div className="modal-buttons">
+                            <div className="modal-button left" onClick={() => { setNotEnoughShips(false); }}>
+                                Back
+                            </div>
+                            <div className="modal-button right" onClick={() => {
+                                setNotEnoughShips(false);
+                                onDone();
+                            }}>
+                                Start Anyway
                             </div>
                         </div>
                     </div>

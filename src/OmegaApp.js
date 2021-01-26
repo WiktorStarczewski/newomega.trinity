@@ -17,7 +17,7 @@ const Modes = {
     Combat: 4,
 }
 
-export default class App extends Component {
+export default class OmegaApp extends Component {
     constructor(props) {
         super(props);
         this.state = {

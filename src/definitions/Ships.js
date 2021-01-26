@@ -6,7 +6,7 @@ export const Ships = [
         asset: 'assets/frigate/',
         description: 'Cheap, quick and agile, the frigate can be used as a quick strike weapon, able to reach enemy lines quickest. Can not withstand much heat though.',
         stats: {
-            cp: 2,
+            cp: 1,
             hp: 1000,
             attack: {
                 base: 30,
@@ -29,7 +29,7 @@ export const Ships = [
         asset: 'assets/cruiser/',
         description: 'As lightest of the heavier ships, the cruiser retains some of the speed and maneuverability of the frigate while offering big improvements in the hull and weaponry.',
         stats: {
-            cp: 8,
+            cp: 4,
             hp: 4000,
             attack: {
                 base: 100,
@@ -52,7 +52,7 @@ export const Ships = [
         asset: 'assets/destroyer/',
         description: 'The destroyer is an effective killing machine, providing both effective support and serving as an artillery line raining heavy damage on enemy ships.',
         stats: {
-            cp: 10,
+            cp: 5,
             hp: 5000,
             attack: {
                 base: 130,
@@ -75,7 +75,7 @@ export const Ships = [
         asset: 'assets/battleship/',
         description: 'Fitted with state of the art weaponry and protection, the battleship is the ultimate fighting force in the galaxy.',
         stats: {
-            cp: 30,
+            cp: 15,
             hp: 10000,
             attack: {
                 base: 200,
