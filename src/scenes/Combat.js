@@ -249,10 +249,10 @@ export const Combat = (props) => {
         logRoundStart(round);
 
         const lhsMoves = _.filter(props.result.lhs, (move) => {
-            return move.round === round;
+            return move.round === round && !_.isEmpty(move.moveType);
         });
         const rhsMoves = _.filter(props.result.rhs, (move) => {
-            return move.round === round;
+            return move.round === round && !_.isEmpty(move.moveType);
         });
 
         playMoves(scene, lhsMoves, true, shipHpsLhs, shipHpsRhs).then(() => {

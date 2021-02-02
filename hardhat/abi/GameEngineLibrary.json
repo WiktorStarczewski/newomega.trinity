@@ -1,0 +1,294 @@
+[
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "cp",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "hp",
+            "type": "uint256"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "base",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "variable",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct ShipVariableStat",
+            "name": "attack",
+            "type": "tuple"
+          },
+          {
+            "internalType": "uint256",
+            "name": "defence",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "speed",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "range",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "agility",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct Ship[]",
+        "name": "Ships",
+        "type": "tuple[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "selectionLhs",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "selectionRhs",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint256",
+        "name": "commanderLhs",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "commanderRhs",
+        "type": "uint256"
+      }
+    ],
+    "name": "fight",
+    "outputs": [
+      {
+        "components": [
+          {
+            "components": [
+              {
+                "internalType": "string",
+                "name": "moveType",
+                "type": "string"
+              },
+              {
+                "internalType": "uint256",
+                "name": "round",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "source",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "target",
+                "type": "uint256"
+              },
+              {
+                "internalType": "int256",
+                "name": "targetPosition",
+                "type": "int256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "damage",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct Move[]",
+            "name": "lhs",
+            "type": "tuple[]"
+          },
+          {
+            "components": [
+              {
+                "internalType": "string",
+                "name": "moveType",
+                "type": "string"
+              },
+              {
+                "internalType": "uint256",
+                "name": "round",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "source",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "target",
+                "type": "uint256"
+              },
+              {
+                "internalType": "int256",
+                "name": "targetPosition",
+                "type": "int256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "damage",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct Move[]",
+            "name": "rhs",
+            "type": "tuple[]"
+          },
+          {
+            "internalType": "int256[]",
+            "name": "lhsHp",
+            "type": "int256[]"
+          },
+          {
+            "internalType": "int256[]",
+            "name": "rhsHp",
+            "type": "int256[]"
+          },
+          {
+            "internalType": "bool",
+            "name": "lhsDead",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "rhsDead",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "rounds",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct FightResult",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "cp",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "hp",
+            "type": "uint256"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "base",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "variable",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct ShipVariableStat",
+            "name": "attack",
+            "type": "tuple"
+          },
+          {
+            "internalType": "uint256",
+            "name": "defence",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "speed",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "range",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "agility",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct Ship[]",
+        "name": "Ships",
+        "type": "tuple[]"
+      },
+      {
+        "internalType": "bool",
+        "name": "isLhs",
+        "type": "bool"
+      },
+      {
+        "internalType": "uint256",
+        "name": "source",
+        "type": "uint256"
+      },
+      {
+        "internalType": "int256",
+        "name": "direction",
+        "type": "int256"
+      },
+      {
+        "internalType": "int256[]",
+        "name": "shipPositionsLhs",
+        "type": "int256[]"
+      },
+      {
+        "internalType": "int256[]",
+        "name": "shipPositionsRhs",
+        "type": "int256[]"
+      },
+      {
+        "internalType": "int256[]",
+        "name": "shipHpsLhs",
+        "type": "int256[]"
+      },
+      {
+        "internalType": "int256[]",
+        "name": "shipHpsRhs",
+        "type": "int256[]"
+      }
+    ],
+    "name": "moveShips",
+    "outputs": [
+      {
+        "internalType": "int256",
+        "name": "",
+        "type": "int256"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  }
+]

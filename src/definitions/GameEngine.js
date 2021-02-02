@@ -3,7 +3,7 @@ import { Ships } from './Ships';
 
 
 export const GameEngine = (selectionLhs, selectionRhs) => {
-    const MAX_ROUNDS = 100;
+    const MAX_ROUNDS = 50;
     const BOARD_SIZE = 15;
 
     const shipPositionsLhs = [ 10, 11, 12, 13 ];

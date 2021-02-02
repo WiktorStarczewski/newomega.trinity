@@ -2,6 +2,7 @@
   "id": "org.celrisen.newomega",
   "version": "0.0.1",
   "version_code": 1,
+  "did": "did:elastos:iYerEKUwG5iBBsEQqQB2oNGEpukrBaEV2W",
   "name": "NewOmega",
   "short_name": "NewOmega",
   "short_description": "New Omega",

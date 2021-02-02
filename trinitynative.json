@@ -6,7 +6,7 @@
         "name": "New Omega",
         "nativepackageid": "org.celrisen.newomega",
         "icon": "./src/assets/images/logo.png",
-        "splashscreen": "./src/NewOmega_trans4.svg",
+        "splashscreen": "./src/nasa.jpg",
         "intentscheme": {
             "scheme": "https",
             "path": "diddemo.trinity-tech.io",
