@@ -2,7 +2,7 @@ import * as Sentry from "@sentry/react";
 import { Integrations } from "@sentry/tracing";
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
+import OmegaApp from './OmegaApp';
 
 Sentry.init({
   dsn: "https://adf39eeb31a04f4c9e2ae1613a647396@o509705.ingest.sentry.io/5604612",
@@ -14,4 +14,4 @@ Sentry.init({
   tracesSampleRate: 1.0,
 });
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<OmegaApp />, document.getElementById('root'));
