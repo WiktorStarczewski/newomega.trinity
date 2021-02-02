@@ -93,6 +93,7 @@
     width: 50%;
     background: rgba(255, 255, 255, 0.8);
     padding: 0.5rem;
+    border-radius: 0.5rem;
 }
 
 .ShipSelection .modal .modal-popup .modal-title {

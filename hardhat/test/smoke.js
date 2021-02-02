@@ -43,15 +43,15 @@ describe("GameEngine", function() {
         //     }
         // });
 
-        // const result = await gameEngine.fight([5,5,5,5], [6,6,6,6], 0, 0);
+        const result = await gameEngine.fight([50,50,50,50], [50,50,50,50], 0, 0);
 
-        const result = await gameManager.attack(accounts[1].address, [5,5,5,5], 0);
+        // const result = await gameManager.attack(accounts[1].address, [5,5,5,5], 0);
 
         await new Promise((resolve, reject) => {
             setTimeout(resolve, 5000);
         })
 
-//        console.log('###RESULT ', result);
+        console.log('###RESULT ', result);
 
         // const result2 = await result.wait();
 

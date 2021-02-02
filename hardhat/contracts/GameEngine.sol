@@ -2,47 +2,53 @@
 pragma solidity >=0.8.0 <0.9.0;
 pragma experimental ABIEncoderV2;
 
+import "hardhat/console.sol";
+
 struct Move {
   string moveType;
-  uint round;
-  uint source;
-  uint target;
-  int targetPosition;
-  uint damage;
+  uint16 round;
+  uint16 source;
+  uint16 target;
+  int16 targetPosition;
+  uint64 damage;
 }
 
 struct FightResult {
+  uint16[] selectionLhs;
+  uint16[] selectionRhs;
+  uint16 commanderLhs;
+  uint16 commanderRhs;
   Move[] lhs;
   Move[] rhs;
-  int[] lhsHp;
-  int[] rhsHp;
+  int64[] lhsHp;
+  int64[] rhsHp;
   bool lhsDead;
   bool rhsDead;
-  uint rounds;
+  uint16 rounds;
 }
 
 struct ShipVariableStat {
-  uint base;
-  uint variable;
+  uint16 base;
+  uint16 variable;
 }
 
 struct Ship {
-  uint cp;
-  uint hp;
+  uint16 cp;
+  uint16 hp;
   ShipVariableStat attack;
-  uint defence;
-  uint speed;
-  uint range;
-  uint agility;
+  uint16 defence;
+  uint16 speed;
+  uint16 range;
+  uint16 agility;
 }
 
 struct FightStateInternal {
-  uint round;
-  uint loggedLhsMoves;
-  uint loggedRhsMoves;
+  uint16 round;
+  uint16 loggedLhsMoves;
+  uint16 loggedRhsMoves;
   Move[] lhsMoves;
   Move[] rhsMoves;
-  uint currentShip;
+  uint16 currentShip;
 }
 
 library GameEngineLibrary {
@@ -51,7 +57,7 @@ library GameEngineLibrary {
   uint constant private MAX_SHIPS = 4;
   uint constant private maxInt = 2**53 - 1;
 
-  function abs(int value) private pure returns (int) {
+  function abs(int16 value) private pure returns (int16) {
     if (value >= 0) {
       return value;
     } else {
@@ -59,15 +65,15 @@ library GameEngineLibrary {
     }
   }
 
-  function min(int lhs, int rhs) private pure returns (int) {
+  function min(int64 lhs, int64 rhs) private pure returns (int64) {
     return lhs < rhs ? lhs : rhs;
   }
 
-  function max(int lhs, int rhs) private pure returns (int) {
+  function max(int64 lhs, int64 rhs) private pure returns (int64) {
     return lhs > rhs ? lhs : rhs;
   }
 
-  function isDead(int[] memory shipHps) private pure returns (bool) {
+  function isDead(int64[] memory shipHps) private pure returns (bool) {
     bool isTargetDead = true;
 
     for (uint i = 0; i < MAX_SHIPS; i++) {
@@ -79,16 +85,16 @@ library GameEngineLibrary {
     return isTargetDead;
   }
 
-  function getTarget(Ship[] memory Ships, uint currentShip, int[] memory shipPositionsOwn, int[] memory shipPositionsEnemy,
-    int[] memory shipHpsEnemy) private pure returns (int) {
+  function getTarget(Ship[] memory Ships, uint16 currentShip, int16[] memory shipPositionsOwn, int16[] memory shipPositionsEnemy,
+    int64[] memory shipHpsEnemy) private pure returns (int16) {
 
-    int position = shipPositionsOwn[currentShip];
+    int16 position = shipPositionsOwn[currentShip];
     uint minDistance = maxInt;
-    uint minDistanceIndex = 0;
+    uint16 minDistanceIndex = 0;
 
-    for (uint enemyShip = 0; enemyShip < MAX_SHIPS; enemyShip++) {
-      int positionTarget = shipPositionsEnemy[enemyShip];
-      uint distance = uint(abs(position - positionTarget));
+    for (uint16 enemyShip = 0; enemyShip < MAX_SHIPS; enemyShip++) {
+      int16 positionTarget = shipPositionsEnemy[enemyShip];
+      uint16 distance = uint16(abs(position - positionTarget));
 
       if (shipHpsEnemy[enemyShip] > 0 && distance <= Ships[currentShip].range) {
         if (distance < minDistance) {
@@ -99,38 +105,39 @@ library GameEngineLibrary {
     }
 
     delete position;
-    return (minDistance == maxInt) ? -1 : int(minDistanceIndex);
+    return (uint(minDistance) == maxInt) ? -1 : int16(minDistanceIndex);
   }
 
-  function getRandomInt(uint maxValue) private view returns (uint) {
-    return uint(keccak256(abi.encodePacked(block.difficulty, block.timestamp, msg.sender))) % maxValue;
+  function getRandomInt(uint16 maxValue) private view returns (uint16) {
+    return uint16(uint(keccak256(abi.encodePacked(block.difficulty, block.timestamp, msg.sender))) % maxValue);
   }
 
-  function calculateDamage(Ship[] memory Ships, uint source, uint target, uint sourceHp, uint sourceMaxHp) private view returns (uint) {
-    uint attack = Ships[source].attack.base +
+  function calculateDamage(Ship[] memory Ships, uint16 source, uint16 target, uint64 sourceHp) private view returns (uint64) {
+    uint16 attack = Ships[source].attack.base +
       getRandomInt(Ships[source].attack.variable);
-    uint defence = Ships[target].defence;
-    uint accuracy = 100 - Ships[target].agility;
-    uint damage = (attack - defence) * accuracy * uint(sourceHp) / uint(sourceMaxHp);
-    uint sourceShipsCount = (sourceHp / Ships[source].hp) + 1;
-    uint capDamage = sourceShipsCount * Ships[target].hp;
+    uint16 defence = Ships[target].defence;
+    uint16 accuracy = 100 - Ships[target].agility;
+    uint64 damagePerShip = (attack - defence) * accuracy;
+    uint16 sourceShipsCount = uint16((sourceHp / Ships[source].hp) + 1);
+    uint64 capDamage = uint64(sourceShipsCount) * uint64(Ships[target].hp);
+    uint64 damage = damagePerShip * uint64(sourceShipsCount);
 
     delete attack;
     delete defence;
     delete accuracy;
     delete sourceShipsCount;
 
-    return uint(min(max(0, int(damage)), int(capDamage)));
+    return uint64(min(max(0, int64(damage)), int64(capDamage)));
   }
 
-  function isPositionFree(int position, int[] memory shipPositionsLhs, int[] memory shipPositionsRhs,
-    int[] memory shipHpsLhs, int[] memory shipHpsRhs) private pure returns (bool) {
-    if (uint(abs(position)) > BOARD_SIZE) {
+  function isPositionFree(int16 position, int16[] memory shipPositionsLhs, int16[] memory shipPositionsRhs,
+    int64[] memory shipHpsLhs, int64[] memory shipHpsRhs) private pure returns (bool) {
+    if (uint16(abs(position)) > BOARD_SIZE) {
       return false;
     }
 
     bool positionTaken = false;
-    for (uint i = 0; i < MAX_SHIPS; i++) {
+    for (uint16 i = 0; i < MAX_SHIPS; i++) {
       if ((shipPositionsLhs[i] == position && shipHpsLhs[i] > 0) ||
         (shipPositionsRhs[i] == position && shipHpsRhs[i] > 0)) {
         positionTaken = true;
@@ -140,12 +147,12 @@ library GameEngineLibrary {
     return !positionTaken;
   }
 
-  function moveShips(Ship[] memory Ships, bool isLhs, uint source, int direction, int[] memory shipPositionsLhs, int[] memory shipPositionsRhs, int[] memory shipHpsLhs, int[] memory shipHpsRhs) public pure returns (int) {
-    int speed = int(Ships[source].speed);
-    int newPosition = isLhs ? shipPositionsLhs[source] : shipPositionsRhs[source];
+  function moveShips(Ship[] memory Ships, bool isLhs, uint16 source, int16 direction, int16[] memory shipPositionsLhs, int16[] memory shipPositionsRhs, int64[] memory shipHpsLhs, int64[] memory shipHpsRhs) public pure returns (int16) {
+    int16 speed = int16(Ships[source].speed);
+    int16 newPosition = isLhs ? shipPositionsLhs[source] : shipPositionsRhs[source];
 
-    for (int speedCheck = speed; speedCheck > 0; speedCheck--) {
-      int proposedPosition = isLhs
+    for (int16 speedCheck = speed; speedCheck > 0; speedCheck--) {
+      int16 proposedPosition = isLhs
         ? shipPositionsLhs[source] + (direction * speedCheck)
         : shipPositionsRhs[source] + (direction * speedCheck);
       if (isPositionFree(proposedPosition, shipPositionsLhs, shipPositionsRhs, shipHpsLhs, shipHpsRhs)) {
@@ -158,7 +165,7 @@ library GameEngineLibrary {
     return newPosition;
   }
 
-  function logShoot(uint index, uint round, Move[] memory moves, uint source, uint target, uint damage) private pure {
+  function logShoot(uint16 index, uint16 round, Move[] memory moves, uint16 source, uint16 target, uint64 damage) private pure {
     moves[index] = Move({
       moveType: 'shoot',
       round: round,
@@ -169,7 +176,7 @@ library GameEngineLibrary {
     });
   }
 
-  function logMove(uint index, uint round, Move[] memory moves, uint source, int targetPosition) private pure {
+  function logMove(uint16 index, uint16 round, Move[] memory moves, uint16 source, int16 targetPosition) private pure {
     moves[index] = Move({
       moveType: 'move',
       round: round,
@@ -180,32 +187,28 @@ library GameEngineLibrary {
     });
   }
 
-  function fight(Ship[] memory Ships, uint[] memory selectionLhs, uint[] memory selectionRhs, uint commanderLhs, uint commanderRhs) public view returns (FightResult memory) {
+  function fight(Ship[] memory Ships, uint16[] memory selectionLhs, uint16[] memory selectionRhs, uint16 commanderLhs, uint16 commanderRhs) public view returns (FightResult memory) {
     require(selectionLhs.length == 4, 'Selection needs to have 4 elements');
     require(selectionRhs.length == 4, 'Selection needs to have 4 elements');
 
-    int[] memory shipPositionsLhs = new int[](4);
+    int16[] memory shipPositionsLhs = new int16[](MAX_SHIPS);
     shipPositionsLhs[0] = 10;
     shipPositionsLhs[1] = 11;
     shipPositionsLhs[2] = 12;
     shipPositionsLhs[3] = 13;
 
-    int[] memory shipPositionsRhs = new int[](4);
+    int16[] memory shipPositionsRhs = new int16[](MAX_SHIPS);
     shipPositionsRhs[0] = -10;
     shipPositionsRhs[1] = -11;
     shipPositionsRhs[2] = -12;
     shipPositionsRhs[3] = -13;
 
-    uint[] memory shipMaxHpLhs = new uint[](MAX_SHIPS);
-    uint[] memory shipMaxHpRhs = new uint[](MAX_SHIPS);
-    int[] memory shipHpsLhs = new int[](MAX_SHIPS);
-    int[] memory shipHpsRhs = new int[](MAX_SHIPS);
+    int64[] memory shipHpsLhs = new int64[](MAX_SHIPS);
+    int64[] memory shipHpsRhs = new int64[](MAX_SHIPS);
 
-    for (uint i = 0; i < MAX_SHIPS; i++) {
-      shipMaxHpLhs[i] = (Ships[i].hp * selectionLhs[i]);
-      shipHpsLhs[i] = int(shipMaxHpLhs[i]);
-      shipMaxHpRhs[i] = (Ships[i].hp * selectionRhs[i]);
-      shipHpsRhs[i] = int(shipMaxHpRhs[i]);
+    for (uint16 i = 0; i < MAX_SHIPS; i++) {
+      shipHpsLhs[i] = int64(Ships[i].hp) * int64(selectionLhs[i]);
+      shipHpsRhs[i] = int64(Ships[i].hp) * int64(selectionRhs[i]);
     }
 
     FightStateInternal memory fightState;
@@ -215,12 +218,12 @@ library GameEngineLibrary {
     for (fightState.round = 0; fightState.round < MAX_ROUNDS && !isDead(shipHpsLhs) && !isDead(shipHpsRhs); fightState.round++) {
       for (fightState.currentShip = 0; fightState.currentShip < MAX_SHIPS; fightState.currentShip++) {
         if (shipHpsLhs[fightState.currentShip] > 0) {
-          int target = getTarget(Ships, fightState.currentShip, shipPositionsLhs, shipPositionsRhs, shipHpsRhs);
+          int16 target = getTarget(Ships, fightState.currentShip, shipPositionsLhs, shipPositionsRhs, shipHpsRhs);
           if (target >= 0) {
-            uint damage = calculateDamage(Ships, fightState.currentShip, uint(target),
-              uint(shipHpsLhs[fightState.currentShip]), shipMaxHpLhs[fightState.currentShip]);
-            shipHpsRhs[uint(target)] -= int(damage);
-            logShoot(fightState.loggedLhsMoves++, fightState.round, fightState.lhsMoves, fightState.currentShip, uint(target), damage);
+            uint64 damage = calculateDamage(Ships, fightState.currentShip, uint16(target),
+              uint64(shipHpsLhs[fightState.currentShip]));
+            shipHpsRhs[uint16(target)] -= int64(damage);
+            logShoot(fightState.loggedLhsMoves++, fightState.round, fightState.lhsMoves, fightState.currentShip, uint16(target), damage);
           } else {
             shipPositionsLhs[fightState.currentShip] = moveShips(Ships, true, fightState.currentShip, -1, shipPositionsLhs,
               shipPositionsRhs, shipHpsLhs, shipHpsRhs);
@@ -231,12 +234,12 @@ library GameEngineLibrary {
 
       for (fightState.currentShip = 0; fightState.currentShip < MAX_SHIPS; fightState.currentShip++) {
         if (shipHpsRhs[fightState.currentShip] > 0) {
-          int target = getTarget(Ships, fightState.currentShip, shipPositionsRhs, shipPositionsLhs, shipHpsLhs);
+          int16 target = getTarget(Ships, fightState.currentShip, shipPositionsRhs, shipPositionsLhs, shipHpsLhs);
           if (target >= 0) {
-            uint damage = calculateDamage(Ships, fightState.currentShip, uint(target),
-              uint(shipHpsRhs[fightState.currentShip]), shipMaxHpRhs[fightState.currentShip]);
-            shipHpsLhs[uint(target)] -= int(damage);
-            logShoot(fightState.loggedRhsMoves++, fightState.round, fightState.rhsMoves, fightState.currentShip, uint(target), damage);
+            uint64 damage = calculateDamage(Ships, fightState.currentShip, uint16(target),
+              uint64(shipHpsRhs[fightState.currentShip]));
+            shipHpsLhs[uint16(target)] -= int64(damage);
+            logShoot(fightState.loggedRhsMoves++, fightState.round, fightState.rhsMoves, fightState.currentShip, uint16(target), damage);
           } else {
             shipPositionsRhs[fightState.currentShip] = moveShips(Ships, false, fightState.currentShip, 1, shipPositionsLhs,
               shipPositionsRhs, shipHpsLhs, shipHpsRhs);
@@ -248,10 +251,12 @@ library GameEngineLibrary {
 
     delete shipPositionsRhs;
     delete shipPositionsLhs;
-    delete shipMaxHpLhs;
-    delete shipMaxHpRhs;
 
     return FightResult({
+      selectionLhs: selectionLhs,
+      selectionRhs: selectionRhs,
+      commanderLhs: commanderLhs,
+      commanderRhs: commanderRhs,
       lhs: fightState.lhsMoves,
       rhs: fightState.rhsMoves,
       lhsHp: shipHpsLhs,
@@ -277,8 +282,8 @@ contract GameEngine {
   mapping(uint => Ship) shipsMapping;
   Ship[] Ships;
 
-  function addShip(uint index, uint cp, uint hp, uint attackBase, uint attackVariable,
-    uint defence, uint speed, uint range, uint agility) public restricted returns (uint) {
+  function addShip(uint16 index, uint16 cp, uint16 hp, uint16 attackBase, uint16 attackVariable,
+    uint16 defence, uint16 speed, uint16 range, uint16 agility) public restricted {
     Ship memory newShip = Ship({
       cp: cp,
       hp: hp,
@@ -300,7 +305,7 @@ contract GameEngine {
     return Ships;
   }
 
-  function fight(uint[] memory selectionLhs, uint[] memory selectionRhs, uint commanderLhs, uint commanderRhs) public view returns (FightResult memory) {
+  function fight(uint16[] memory selectionLhs, uint16[] memory selectionRhs, uint16 commanderLhs, uint16 commanderRhs) public view returns (FightResult memory) {
     require(selectionLhs.length == 4, 'Selection needs to have 4 elements');
     require(selectionRhs.length == 4, 'Selection needs to have 4 elements');
 

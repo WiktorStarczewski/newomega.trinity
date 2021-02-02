@@ -11,8 +11,8 @@ struct CommanderData {
 struct PlayerDefence {
     address player;
     bool isInitialised;
-    uint[] defenceSelection;
-    uint commander;
+    uint16[] defenceSelection;
+    uint16 commander;
     string name;
 }
 
@@ -35,7 +35,7 @@ contract GameManager {
     address public owner = msg.sender;
     GameEngine public gameEngine;
 
-    constructor(GameEngine engine) public {
+    constructor(GameEngine engine) {
         gameEngine = engine;
     }
 
@@ -62,7 +62,7 @@ contract GameManager {
         return playerDefenders;
     }
 
-    function registerDefence(uint[] memory defence, uint commander, string memory name) public {
+    function registerDefence(uint16[] memory defence, uint16 commander, string memory name) public {
         PlayerDefence memory newDefence = PlayerDefence({
             player: msg.sender,
             defenceSelection: defence,
@@ -81,7 +81,7 @@ contract GameManager {
         return playerDefenceMapping[msg.sender];
     }
 
-    function attack(address enemy, uint[] memory selection, uint commander) public returns (FightResult memory result) {
+    function attack(address enemy, uint16[] memory selection, uint16 commander) public returns (FightResult memory result) {
         require(playerDefenceMapping[enemy].isInitialised, 'Can only attack a registered defence');
         result = gameEngine.fight(
             selection, playerDefenceMapping[enemy].defenceSelection,
@@ -100,7 +100,7 @@ contract GameManager {
         }
 
         if (!playerDefenceMapping[msg.sender].isInitialised) {
-            uint[] memory defaultDefence = new uint[](4);
+            uint16[] memory defaultDefence = new uint16[](4);
             defaultDefence[0] = 20;
             defaultDefence[1] = 20;
             defaultDefence[2] = 20;

@@ -1,11 +1,13 @@
 import './App.css';
 import React, { Component } from 'react';
-import Web3 from 'web3';
 import { ethers } from 'ethers';
 import * as TrinitySDK from "@elastosfoundation/trinity-dapp-sdk";
 import { ShipSelection } from './scenes/ShipSelection';
 import { CommanderSelection } from './scenes/CommanderSelection';
 import { Combat } from './scenes/Combat';
+import { OpponentSelection } from './ui/OpponentSelection';
+import { Leaderboard } from './ui/Leaderboard';
+import { ShowLogs } from './ui/ShowLogs';
 import { GameEngine } from './definitions/GameEngine';
 import { Ships } from './definitions/Ships';
 import _ from 'underscore';
@@ -17,7 +19,10 @@ const Modes = {
     CommanderSelection: 2,
     CommanderPreview: 3,
     Combat: 4,
-}
+    OpponentSelection: 5,
+    ShowLogs: 6,
+    Leaderboard: 7,
+};
 
 export default class OmegaApp extends Component {
     constructor(props) {
@@ -29,8 +34,13 @@ export default class OmegaApp extends Component {
             trainingSelfSelection: null,
             trainingResult: null,
             trainingSelfCommander: null,
+            trainingOpponent: null,
             trainingOpponentSelection: null,
+            trainingOpponentCommander: null,
             trainingCp: null,
+            defenders: null,
+            settingDefence: false,
+            settingAttack: false,
         };
 
         this.defaultUnloadedState = {
@@ -63,12 +73,22 @@ export default class OmegaApp extends Component {
                 loading: true,
             });
 
-            console.log(this.state.trainingSelfSelection);
-
             await this.state.gameManagerContract.registerDefence(
                 this.state.trainingSelfSelection,
                 commander,
                 this.state.ownAccount
+            );
+
+            this.setState(this.defaultLoadedState);
+        } else if (this.state.settingAttack) {
+            this.setState({
+                loading: true,
+            });
+
+            await this.state.gameManagerContract.attack(
+                this.state.trainingOpponent,
+                this.state.trainingSelfSelection,
+                commander
             );
 
             this.setState(this.defaultLoadedState);
@@ -81,8 +101,19 @@ export default class OmegaApp extends Component {
     }
 
     commanderPreviewDone() {
+        this.setState(this.defaultLoadedState);
+    }
+
+    opponentSelectionDone(opponent) {
+        const trainingOpponentSelection = opponent.defenceSelection;
+
         this.setState({
-            mode: Modes.MainScreen,
+            mode: Modes.ShipSelection,
+            settingAttack: true,
+            trainingOpponent: opponent.player,
+            trainingOpponentSelection,
+            trainingOpponentCommander: opponent.commander,
+            trainingCp: this._selectionToCp(trainingOpponentSelection),
         });
     }
 
@@ -119,69 +150,92 @@ export default class OmegaApp extends Component {
         });
     }
 
-    async attack() {
-        const defendersPromise = this.state.gameManagerContract.getAllDefenders();
-        defendersPromise.then((defenders) => {
-            debugger;
+    async showLogs() {
+        const filter = this.state.gameManagerContract.filters.FightComplete();
+        filter.fromBlock = this.state.provider.getBlockNumber().then((b) => b - 10000);
+        filter.toBlock = 'latest';
+        filter.attacker = this.state.ownAccount;
+
+        this.setState({
+            loading: true,
         });
 
+        const logs = await this.state.provider.getLogs(filter);
+        const logsParsed = _.map(logs, (log) => {
+            return this.state.gameManagerContract.interface.parseLog(log);
+        });
 
-
-        // const result = await this.state.gameEngineContract.fight(
-        //     this.state.ownAccount,
-        //     this.state.ownAccount,
-        //     [10, 10, 10, 10],
-        //     [10, 10, 10, 10],
-        //     0,
-        //     0);
-
-        // const _parseMoves = (moves) => {
-        //     return _.map(moves, (move) => {
-        //         return {
-        //             moveType: move.moveType,
-        //             round: move.round.toNumber(),
-        //             source: move.source.toNumber(),
-        //             target: move.target.toNumber(),
-        //             damage: move.damage.toNumber(),
-        //             targetPosition: move.targetPosition.toNumber(),
-        //         };
-        //     });
-        // };
-
-        // const _parseHp = (hp) => {
-        //     return _.map(hp, (hpInst) => {
-        //         return hpInst.toNumber();
-        //     });
-        // }
-
-        // const _parseRounds = (rounds) => {
-        //     return rounds.toNumber();
-        // }
-
-        // const resultJson = {
-        //     lhs: _parseMoves(result[0]),
-        //     rhs: _parseMoves(result[1]),
-        //     lhsHp: _parseHp(result[2]),
-        //     rhsHp: _parseHp(result[3]),
-        //     rounds: _parseRounds(result[4]),
-        // };
-
-        // console.log(resultJson);
-
-        // this.setState({
-        //     mode: Modes.Combat,
-        //     trainingSelfSelection: [10, 10, 10, 10],
-        //     trainingSelfCommander: 0,
-        //     trainingOpponentSelection: [10, 10, 10, 10],
-        //     trainingCp: this._selectionToCp([10, 10, 10, 10]),
-        //     trainingResult: resultJson,
-        // });
+        this.setState({
+            mode: Modes.ShowLogs,
+            logs: logsParsed,
+            loading: false,
+        });
     }
 
-    leaderboard() {
-        const leaderboardPromise = this.state.gameManagerContract.getLeaderboard();
-        leaderboardPromise.then((leaderboard) => {
+    logSelectionDone(log) {
+        const result = log.args[2];
 
+        const _parseMoves = (moves) => {
+            return _.map(moves, (move) => {
+                return {
+                    ...move,
+                    damage: move.damage.toNumber(),
+                };
+            });
+        };
+
+        const _parseHp = (hp) => {
+            return _.map(hp, (hpInst) => {
+                return hpInst.toNumber();
+            });
+        }
+
+        const resultJson = {
+            lhs: _parseMoves(result.lhs),
+            rhs: _parseMoves(result.rhs),
+            lhsHp: _parseHp(result.lhsHp),
+            rhsHp: _parseHp(result.rhsHp),
+            rounds: result.rounds,
+            selectionLhs: result.selectionLhs,
+            selectionRhs: result.selectionRhs,
+            commanderLhs: result.commanderLhs,
+            commanderRhs: result.commanderRhs,
+        };
+
+        this.setState({
+            mode: Modes.Combat,
+            trainingSelfSelection: resultJson.selectionLhs,
+            trainingSelfCommander: resultJson.commanderLhs,
+            trainingOpponentSelection: resultJson.selectionRhs,
+            trainingResult: resultJson,
+        });
+    }
+
+    async attack() {
+        this.setState({
+            loading: true,
+        });
+
+        const defenders = await this.state.gameManagerContract.getAllDefenders();
+
+        this.setState({
+            mode: Modes.OpponentSelection,
+            defenders,
+            loading: false,
+        });
+    }
+
+    async leaderboard() {
+        this.setState({
+            loading: true,
+        });
+
+        const leaderboard = await this.state.gameManagerContract.getLeaderboard();
+
+        this.setState({
+            mode: Modes.Leaderboard,
+            leaderboard,
+            loading: false,
         });
     }
 
@@ -199,11 +253,14 @@ export default class OmegaApp extends Component {
                             <div className="mainMenuItem" onClick={this.commanders.bind(this)}>
                                 COMMANDERS
                             </div>
+                            <div className="mainMenuItem" onClick={this.showLogs.bind(this)}>
+                                LOGS
+                            </div>
                             <div className="mainMenuItem" onClick={this.defend.bind(this)}>
-                                RANKED DEFENCE
+                                DEFENCE
                             </div>
                             <div className="mainMenuItem" onClick={this.attack.bind(this)}>
-                                RANKED ATTACK
+                                ATTACK
                             </div>
                             <div className="mainMenuItem" onClick={this.leaderboard.bind(this)}>
                                 LEADERBOARD
@@ -231,6 +288,17 @@ export default class OmegaApp extends Component {
                         result={this.state.trainingResult}
                     />
                 }
+                {this.state.mode === Modes.OpponentSelection &&
+                    <OpponentSelection opponents={this.state.defenders}
+                        onDone={this.opponentSelectionDone.bind(this)}
+                    />
+                }
+                {this.state.mode === Modes.ShowLogs &&
+                    <ShowLogs logs={this.state.logs} onDone={this.logSelectionDone.bind(this)}/>
+                }
+                {this.state.mode === Modes.Leaderboard &&
+                    <Leaderboard leaderboard={this.state.leaderboard}/>
+                }
                 <div
                     id="omegaLoadingScreen"
                     style={this.state.web3Loaded && !this.state.loading ? {display: 'none'} : {}}>
@@ -254,7 +322,7 @@ export default class OmegaApp extends Component {
         const accounts = await window.ethereum.send('eth_requestAccounts');
 
         this.setState({
-            web3: provider,
+            provider,
             ownAccount: accounts.result[0],
             signer,
         }, () => {
@@ -264,11 +332,11 @@ export default class OmegaApp extends Component {
 
     _loadContracts(signer) {
         const gameEngineJson = require('./abi/GameEngine.json');
-        const gameEngineContractAddress = '0x78A83DdB7698FEF62C8E403eB18CBa7C620C4335';
+        const gameEngineContractAddress = '0x39a3c0cDddF3f46A1b7462e911508E20230e6034';
         const gameEngineContract = new ethers.Contract(gameEngineContractAddress, gameEngineJson, signer);
 
         const gameManagerJson = require('./abi/GameManager.json');
-        const gameManagerContractAddress = '0xd6b5Cff06eC1F15145C291a493fa5674B0Efa830';
+        const gameManagerContractAddress = '0xc7ed5147cd9C348fdd3Fa954c3391597873ec010';
         const gameManagerContract = new ethers.Contract(gameManagerContractAddress, gameManagerJson, signer);
 
         this.setState({
