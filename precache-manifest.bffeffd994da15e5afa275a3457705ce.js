@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "5b240e5dfc7ef51d002c5e8ea314a3f3",
+    "revision": "28fe90391463975691a900f5330ffe11",
     "url": "/newomega.trinity/index.html"
   },
   {
