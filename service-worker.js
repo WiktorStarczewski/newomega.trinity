@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/newomega.trinity/precache-manifest.bffeffd994da15e5afa275a3457705ce.js"
+  "/newomega.trinity/precache-manifest.7ff981b9eb753409a729c1b6caf61157.js"
 );
 
 self.addEventListener('message', (event) => {
