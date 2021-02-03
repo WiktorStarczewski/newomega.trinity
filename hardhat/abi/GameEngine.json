@@ -80,14 +80,14 @@
       {
         "components": [
           {
-            "internalType": "string",
+            "internalType": "bytes32",
             "name": "nameLhs",
-            "type": "string"
+            "type": "bytes32"
           },
           {
-            "internalType": "string",
+            "internalType": "bytes32",
             "name": "nameRhs",
-            "type": "string"
+            "type": "bytes32"
           },
           {
             "internalType": "uint16[]",
@@ -112,14 +112,14 @@
           {
             "components": [
               {
-                "internalType": "string",
+                "internalType": "uint8",
                 "name": "moveType",
-                "type": "string"
+                "type": "uint8"
               },
               {
-                "internalType": "uint16",
+                "internalType": "uint8",
                 "name": "round",
-                "type": "uint16"
+                "type": "uint8"
               },
               {
                 "internalType": "uint16",
@@ -149,14 +149,14 @@
           {
             "components": [
               {
-                "internalType": "string",
+                "internalType": "uint8",
                 "name": "moveType",
-                "type": "string"
+                "type": "uint8"
               },
               {
-                "internalType": "uint16",
+                "internalType": "uint8",
                 "name": "round",
-                "type": "uint16"
+                "type": "uint8"
               },
               {
                 "internalType": "uint16",
@@ -182,16 +182,6 @@
             "internalType": "struct Move[]",
             "name": "rhs",
             "type": "tuple[]"
-          },
-          {
-            "internalType": "int64[]",
-            "name": "lhsHp",
-            "type": "int64[]"
-          },
-          {
-            "internalType": "int64[]",
-            "name": "rhsHp",
-            "type": "int64[]"
           },
           {
             "internalType": "bool",

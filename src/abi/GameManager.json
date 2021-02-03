@@ -28,14 +28,14 @@
       {
         "components": [
           {
-            "internalType": "string",
+            "internalType": "bytes32",
             "name": "nameLhs",
-            "type": "string"
+            "type": "bytes32"
           },
           {
-            "internalType": "string",
+            "internalType": "bytes32",
             "name": "nameRhs",
-            "type": "string"
+            "type": "bytes32"
           },
           {
             "internalType": "uint16[]",
@@ -60,14 +60,14 @@
           {
             "components": [
               {
-                "internalType": "string",
+                "internalType": "uint8",
                 "name": "moveType",
-                "type": "string"
+                "type": "uint8"
               },
               {
-                "internalType": "uint16",
+                "internalType": "uint8",
                 "name": "round",
-                "type": "uint16"
+                "type": "uint8"
               },
               {
                 "internalType": "uint16",
@@ -97,14 +97,14 @@
           {
             "components": [
               {
-                "internalType": "string",
+                "internalType": "uint8",
                 "name": "moveType",
-                "type": "string"
+                "type": "uint8"
               },
               {
-                "internalType": "uint16",
+                "internalType": "uint8",
                 "name": "round",
-                "type": "uint16"
+                "type": "uint8"
               },
               {
                 "internalType": "uint16",
@@ -130,16 +130,6 @@
             "internalType": "struct Move[]",
             "name": "rhs",
             "type": "tuple[]"
-          },
-          {
-            "internalType": "int64[]",
-            "name": "lhsHp",
-            "type": "int64[]"
-          },
-          {
-            "internalType": "int64[]",
-            "name": "rhsHp",
-            "type": "int64[]"
           },
           {
             "internalType": "bool",
@@ -184,9 +174,9 @@
         "type": "uint16"
       },
       {
-        "internalType": "string",
+        "internalType": "bytes32",
         "name": "playerName",
-        "type": "string"
+        "type": "bytes32"
       }
     ],
     "name": "attack",
@@ -194,14 +184,14 @@
       {
         "components": [
           {
-            "internalType": "string",
+            "internalType": "bytes32",
             "name": "nameLhs",
-            "type": "string"
+            "type": "bytes32"
           },
           {
-            "internalType": "string",
+            "internalType": "bytes32",
             "name": "nameRhs",
-            "type": "string"
+            "type": "bytes32"
           },
           {
             "internalType": "uint16[]",
@@ -226,14 +216,14 @@
           {
             "components": [
               {
-                "internalType": "string",
+                "internalType": "uint8",
                 "name": "moveType",
-                "type": "string"
+                "type": "uint8"
               },
               {
-                "internalType": "uint16",
+                "internalType": "uint8",
                 "name": "round",
-                "type": "uint16"
+                "type": "uint8"
               },
               {
                 "internalType": "uint16",
@@ -263,14 +253,14 @@
           {
             "components": [
               {
-                "internalType": "string",
+                "internalType": "uint8",
                 "name": "moveType",
-                "type": "string"
+                "type": "uint8"
               },
               {
-                "internalType": "uint16",
+                "internalType": "uint8",
                 "name": "round",
-                "type": "uint16"
+                "type": "uint8"
               },
               {
                 "internalType": "uint16",
@@ -296,16 +286,6 @@
             "internalType": "struct Move[]",
             "name": "rhs",
             "type": "tuple[]"
-          },
-          {
-            "internalType": "int64[]",
-            "name": "lhsHp",
-            "type": "int64[]"
-          },
-          {
-            "internalType": "int64[]",
-            "name": "rhsHp",
-            "type": "int64[]"
           },
           {
             "internalType": "bool",
@@ -371,9 +351,9 @@
             "type": "uint16"
           },
           {
-            "internalType": "string",
+            "internalType": "bytes32",
             "name": "name",
-            "type": "string"
+            "type": "bytes32"
           }
         ],
         "internalType": "struct PlayerDefence[]",
@@ -396,19 +376,19 @@
             "type": "address"
           },
           {
-            "internalType": "string",
+            "internalType": "bytes32",
             "name": "name",
-            "type": "string"
+            "type": "bytes32"
           },
           {
-            "internalType": "uint256",
+            "internalType": "uint32",
             "name": "wins",
-            "type": "uint256"
+            "type": "uint32"
           },
           {
-            "internalType": "uint256",
+            "internalType": "uint32",
             "name": "losses",
-            "type": "uint256"
+            "type": "uint32"
           }
         ],
         "internalType": "struct LeaderboardEntry[]",
@@ -446,9 +426,9 @@
             "type": "uint16"
           },
           {
-            "internalType": "string",
+            "internalType": "bytes32",
             "name": "name",
-            "type": "string"
+            "type": "bytes32"
           }
         ],
         "internalType": "struct PlayerDefence",
@@ -485,9 +465,9 @@
         "type": "uint16"
       },
       {
-        "internalType": "string",
+        "internalType": "bytes32",
         "name": "name",
-        "type": "string"
+        "type": "bytes32"
       }
     ],
     "name": "registerDefence",

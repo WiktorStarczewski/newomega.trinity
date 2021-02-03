@@ -5,8 +5,8 @@ pragma experimental ABIEncoderV2;
 import "hardhat/console.sol";
 
 struct Move {
-  string moveType;
-  uint16 round;
+  uint8 moveType;
+  uint8 round;
   uint16 source;
   uint16 target;
   int16 targetPosition;
@@ -14,16 +14,14 @@ struct Move {
 }
 
 struct FightResult {
-  string nameLhs;
-  string nameRhs;
+  bytes32 nameLhs;
+  bytes32 nameRhs;
   uint16[] selectionLhs;
   uint16[] selectionRhs;
   uint16 commanderLhs;
   uint16 commanderRhs;
   Move[] lhs;
   Move[] rhs;
-  int64[] lhsHp;
-  int64[] rhsHp;
   bool lhsDead;
   bool rhsDead;
   uint16 rounds;
@@ -45,18 +43,20 @@ struct Ship {
 }
 
 struct FightStateInternal {
-  uint16 round;
+  uint8 round;
   uint16 loggedLhsMoves;
   uint16 loggedRhsMoves;
   Move[] lhsMoves;
+  Move[] lhsOptimisedMoves;
   Move[] rhsMoves;
+  Move[] rhsOptimisedMoves;
   uint16 currentShip;
 }
 
 library GameEngineLibrary {
-  uint constant private BOARD_SIZE = 15;
-  uint constant private MAX_ROUNDS = 50;
-  uint constant private MAX_SHIPS = 4;
+  uint8 constant private BOARD_SIZE = 15;
+  uint8 constant private MAX_ROUNDS = 30;
+  uint8 constant private MAX_SHIPS = 4;
   uint constant private maxInt = 2**53 - 1;
 
   function abs(int16 value) private pure returns (int16) {
@@ -88,7 +88,7 @@ library GameEngineLibrary {
   }
 
   function getTarget(Ship[] memory Ships, uint16 currentShip, int16[] memory shipPositionsOwn, int16[] memory shipPositionsEnemy,
-    int64[] memory shipHpsEnemy) private pure returns (int16) {
+    int64[] memory shipHpsEnemy) internal pure returns (int16) {
 
     int16 position = shipPositionsOwn[currentShip];
     uint minDistance = maxInt;
@@ -114,7 +114,7 @@ library GameEngineLibrary {
     return uint16(uint(keccak256(abi.encodePacked(block.difficulty, block.timestamp, msg.sender))) % maxValue);
   }
 
-  function calculateDamage(Ship[] memory Ships, uint16 source, uint16 target, uint64 sourceHp) private view returns (uint64) {
+  function calculateDamage(Ship[] memory Ships, uint16 source, uint16 target, uint64 sourceHp) internal view returns (uint64) {
     uint16 attack = Ships[source].attack.base +
       getRandomInt(Ships[source].attack.variable);
     uint16 defence = Ships[target].defence;
@@ -149,7 +149,7 @@ library GameEngineLibrary {
     return !positionTaken;
   }
 
-  function moveShips(Ship[] memory Ships, bool isLhs, uint16 source, int16 direction, int16[] memory shipPositionsLhs, int16[] memory shipPositionsRhs, int64[] memory shipHpsLhs, int64[] memory shipHpsRhs) public pure returns (int16) {
+  function moveShips(Ship[] memory Ships, bool isLhs, uint16 source, int16 direction, int16[] memory shipPositionsLhs, int16[] memory shipPositionsRhs, int64[] memory shipHpsLhs, int64[] memory shipHpsRhs) internal pure returns (int16) {
     int16 speed = int16(Ships[source].speed);
     int16 newPosition = isLhs ? shipPositionsLhs[source] : shipPositionsRhs[source];
 
@@ -167,9 +167,9 @@ library GameEngineLibrary {
     return newPosition;
   }
 
-  function logShoot(uint16 index, uint16 round, Move[] memory moves, uint16 source, uint16 target, uint64 damage) private pure {
+  function logShoot(uint16 index, uint8 round, Move[] memory moves, uint16 source, uint16 target, uint64 damage) private pure {
     moves[index] = Move({
-      moveType: 'shoot',
+      moveType: 1,
       round: round,
       source: source,
       target: target,
@@ -178,9 +178,9 @@ library GameEngineLibrary {
     });
   }
 
-  function logMove(uint16 index, uint16 round, Move[] memory moves, uint16 source, int16 targetPosition) private pure {
+  function logMove(uint16 index, uint8 round, Move[] memory moves, uint16 source, int16 targetPosition) private pure {
     moves[index] = Move({
-      moveType: 'move',
+      moveType: 2,
       round: round,
       source: source,
       targetPosition: targetPosition,
@@ -251,6 +251,14 @@ library GameEngineLibrary {
       }
     }
 
+    fightState.lhsOptimisedMoves = new Move[](fightState.round * MAX_SHIPS);
+    fightState.rhsOptimisedMoves = new Move[](fightState.round * MAX_SHIPS);
+
+    for (uint16 i = 0; i < fightState.round * MAX_SHIPS; i++) {
+      fightState.lhsOptimisedMoves[i] = fightState.lhsMoves[i];
+      fightState.rhsOptimisedMoves[i] = fightState.rhsMoves[i];
+    }
+
     delete shipPositionsRhs;
     delete shipPositionsLhs;
 
@@ -261,10 +269,8 @@ library GameEngineLibrary {
       selectionRhs: selectionRhs,
       commanderLhs: commanderLhs,
       commanderRhs: commanderRhs,
-      lhs: fightState.lhsMoves,
-      rhs: fightState.rhsMoves,
-      lhsHp: shipHpsLhs,
-      rhsHp: shipHpsRhs,
+      lhs: fightState.lhsOptimisedMoves,
+      rhs: fightState.rhsOptimisedMoves,
       lhsDead: isDead(shipHpsLhs),
       rhsDead: isDead(shipHpsRhs),
       rounds: fightState.round

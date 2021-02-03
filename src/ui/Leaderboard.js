@@ -1,6 +1,7 @@
 import './Leaderboard.css';
 import React from 'react';
 import _ from 'underscore';
+import { ethers } from 'ethers';
 
 
 // props.opponents, props.onDone
@@ -11,10 +12,10 @@ export const Leaderboard = (props) => {
                 key={ind}
                 className="mainMenuItem"
             >
-                <div className="name">{entry.name}</div>
+                <div className="name">{ethers.utils.parseBytes32String(entry.name)}</div>
                 <div className="address">Address: {entry.player}</div>
-                <div className="wins">Wins: {entry.wins.toNumber()}</div>
-                <div className="losses">Losses: {entry.losses.toNumber()}</div>
+                <div className="wins">Wins: {entry.wins}</div>
+                <div className="losses">Losses: {entry.losses}</div>
             </div>
         );
     };

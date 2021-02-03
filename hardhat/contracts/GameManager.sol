@@ -4,31 +4,26 @@ pragma experimental ABIEncoderV2;
 
 import "./GameEngine.sol";
 
-struct CommanderData {
-    uint experience;
-}
-
 struct PlayerDefence {
     address player;
     bool isInitialised;
     uint16[] defenceSelection;
     uint16 commander;
-    string name;
+    bytes32 name;
 }
 
 struct PlayerData {
     address player;
     bool isInitialised;
-    CommanderData[] commanders;
-    uint wins;
-    uint losses;
+    uint32 wins;
+    uint32 losses;
 }
 
 struct LeaderboardEntry {
     address player;
-    string name;
-    uint wins;
-    uint losses;
+    bytes32 name;
+    uint32 wins;
+    uint32 losses;
 }
 
 contract GameManager {
@@ -56,13 +51,19 @@ contract GameManager {
     mapping(address => PlayerData) playerDataMapping;
     address[] playerData;
     mapping(address => PlayerDefence) playerDefenceMapping;
-    PlayerDefence[] playerDefenders;
+    address[] playerDefenders;
 
     function getAllDefenders() public view returns (PlayerDefence[] memory) {
-        return playerDefenders;
+        PlayerDefence[] memory ret = new PlayerDefence[](playerDefenders.length);
+
+        for (uint i = 0; i < playerDefenders.length; i++) {
+            ret[i] = playerDefenceMapping[playerDefenders[i]];
+        }
+
+        return ret;
     }
 
-    function registerDefence(uint16[] memory defence, uint16 commander, string memory name) public {
+    function registerDefence(uint16[] memory defence, uint16 commander, bytes32 name) public {
         PlayerDefence memory newDefence = PlayerDefence({
             player: msg.sender,
             defenceSelection: defence,
@@ -71,7 +72,7 @@ contract GameManager {
             isInitialised: true
         });
         if (!playerDefenceMapping[msg.sender].isInitialised) {
-            playerDefenders.push(newDefence);
+            playerDefenders.push(msg.sender);
         }
         playerDefenceMapping[msg.sender] = newDefence;
     }
@@ -81,7 +82,7 @@ contract GameManager {
         return playerDefenceMapping[msg.sender];
     }
 
-    function attack(address enemy, uint16[] memory selection, uint16 commander, string memory playerName) public returns (FightResult memory result) {
+    function attack(address enemy, uint16[] memory selection, uint16 commander, bytes32 playerName) public returns (FightResult memory result) {
         require(playerDefenceMapping[enemy].isInitialised, 'Can only attack a registered defence');
         result = gameEngine.fight(
             selection, playerDefenceMapping[enemy].defenceSelection,

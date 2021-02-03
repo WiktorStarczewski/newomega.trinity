@@ -1,6 +1,7 @@
 import './ShowLogs.css';
 import React from 'react';
 import _ from 'underscore';
+import { ethers } from 'ethers';
 
 
 // props.opponents, props.onDone
@@ -10,15 +11,17 @@ export const ShowLogs = (props) => {
     };
 
     const renderLog = (log, ind) => {
+        debugger;
+
         return (
             <div
                 key={ind}
                 className="mainMenuItem"
                 onClick={() => { selectLog(log) }}
             >
-                <span className="address">{log.args[2].nameLhs}</span>
+                <span className="address">{ethers.utils.parseBytes32String(log.args[2].nameLhs)}</span>
                 <span className="vs"> VS </span>
-                <span className="address">{log.args[2].nameRhs}</span>
+                <span className="address">{ethers.utils.parseBytes32String(log.args[2].nameRhs)}</span>
             </div>
         );
     };

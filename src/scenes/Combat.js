@@ -210,9 +210,9 @@ export const Combat = (props) => {
             }
 
             let movePromise;
-            if (move.moveType === 'move') {
+            if (move.moveType === 2) {
                 movePromise = moveShips(scene, move, isLhs);
-            } else {
+            } else if (move.moveType === 1) {
                 movePromise = new Promise((resolve, reject) => {
                     showAttacks(scene, move, isLhs);
                     const shipHps = isLhs ? shipHpsRhs : shipHpsLhs;
@@ -249,10 +249,10 @@ export const Combat = (props) => {
         logRoundStart(round);
 
         const lhsMoves = _.filter(props.result.lhs, (move) => {
-            return move.round === round && !_.isEmpty(move.moveType);
+            return move.round === round && move.moveType !== 0;
         });
         const rhsMoves = _.filter(props.result.rhs, (move) => {
-            return move.round === round && !_.isEmpty(move.moveType);
+            return move.round === round && move.moveType !== 0;
         });
 
         playMoves(scene, lhsMoves, true, shipHpsLhs, shipHpsRhs).then(() => {
@@ -302,13 +302,9 @@ export const Combat = (props) => {
     };
 
     const getWinnerString = () => {
-        const isDead = (shipHps) => {
-            return !_.find(shipHps, (shipHp) => shipHp > 0);
-        };
-
-        if (isDead(props.result.lhsHp)) {
+        if (props.result.lhsDead) {
             return 'Defender Wins';
-        } else if (isDead(props.result.rhsHp)) {
+        } else if (props.result.rhsDead) {
             return 'Attacker Wins';
         } else {
             return 'Draw';

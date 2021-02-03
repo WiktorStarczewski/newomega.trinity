@@ -13,6 +13,7 @@ import { Ships } from './definitions/Ships';
 import _ from 'underscore';
 
 
+
 const Modes = {
     MainScreen: 0,
     ShipSelection: 1,
@@ -77,13 +78,16 @@ export default class OmegaApp extends Component {
                 loading: true,
             });
 
-            const tx = await this.state.gameManagerContract.registerDefence(
-                this.state.trainingSelfSelection,
-                commander,
-                this.state.playerName
-            );
+            try {
+                const tx = await this.state.gameManagerContract.registerDefence(
+                    this.state.trainingSelfSelection,
+                    commander,
+                    ethers.utils.formatBytes32String(this.state.playerName)
+                );
 
-            await tx.wait();
+                await tx.wait();
+            } catch (error) {
+            }
 
             this.setState(this.defaultLoadedState);
         } else if (this.state.settingAttack) {
@@ -91,14 +95,17 @@ export default class OmegaApp extends Component {
                 loading: true,
             });
 
-            const tx = await this.state.gameManagerContract.attack(
-                this.state.trainingOpponent,
-                this.state.trainingSelfSelection,
-                commander,
-                this.state.playerName
-            );
+            try {
+                const tx = await this.state.gameManagerContract.attack(
+                    this.state.trainingOpponent,
+                    this.state.trainingSelfSelection,
+                    commander,
+                    ethers.utils.formatBytes32String(this.state.playerName)
+                );
 
-            await tx.wait();
+                await tx.wait();
+            } catch (error) {
+            }
 
             this.setState(this.defaultLoadedState);
         } else {
@@ -235,6 +242,8 @@ export default class OmegaApp extends Component {
             selectionRhs: result.selectionRhs,
             commanderLhs: result.commanderLhs,
             commanderRhs: result.commanderRhs,
+            lhsDead: result.lhsDead,
+            rhsDead: result.rhsDead,
         };
 
         this.setState({
@@ -390,11 +399,11 @@ export default class OmegaApp extends Component {
 
     _loadContracts(provider, signer, ownAccount) {
         const gameEngineJson = require('./abi/GameEngine.json');
-        const gameEngineContractAddress = '0xa0df2C356abeb3f330Bc29D4ff3E60A0dc4048fc';
+        const gameEngineContractAddress = '0x413bE6F319B9eDa31df02Fb653314E03E1dCF401';
         const gameEngineContract = new ethers.Contract(gameEngineContractAddress, gameEngineJson, signer);
 
         const gameManagerJson = require('./abi/GameManager.json');
-        const gameManagerContractAddress = '0xD2B6448BBB63076D4fe918AFde604c42F12768aC';
+        const gameManagerContractAddress = '0xC91da4a591d08be306D6ae35EF5d114D400bA529';
         const gameManagerContract = new ethers.Contract(gameManagerContractAddress, gameManagerJson, signer);
 
         this.attachBlockchainEvents(provider, gameManagerContract, ownAccount);

@@ -2,14 +2,14 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/wiktor/projects/newomega-trinity/org.celrisen.newomega/hardhat/contracts/GameEngine.sol": {
-      "lastModificationDate": 1612310094017,
-      "contentHash": "f9bf7d929386241566fcb75ef384bfa2",
+      "lastModificationDate": 1612349403157,
+      "contentHash": "ed643212c1ba0b901027286076e95f45",
       "sourceName": "contracts/GameEngine.sol",
       "solcConfig": {
         "version": "0.8.0",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
           "outputSelection": {
@@ -39,14 +39,14 @@
       ]
     },
     "/Users/wiktor/projects/newomega-trinity/org.celrisen.newomega/hardhat/contracts/GameManager.sol": {
-      "lastModificationDate": 1612310276200,
-      "contentHash": "129da8a097d4ec14d7ce3d5a17376c9b",
+      "lastModificationDate": 1612370420720,
+      "contentHash": "f62d62123e919c8e6f0ca7653f761794",
       "sourceName": "contracts/GameManager.sol",
       "solcConfig": {
         "version": "0.8.0",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
           "outputSelection": {
@@ -82,7 +82,7 @@
         "version": "0.8.0",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
           "outputSelection": {
@@ -116,7 +116,7 @@
         "version": "0.8.0",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
           "outputSelection": {

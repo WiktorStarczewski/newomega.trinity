@@ -9,7 +9,17 @@ const INFURA_PROJECT_ID = 'dbb5964e1c98437389d0c43ee39db58a';
 
 
 module.exports = {
-    solidity: "0.8.0",
+    solidity: {
+        version: "0.8.0",
+        // docker: true,
+        settings: {
+            optimizer: {
+                enabled: true,
+                runs: 200
+            }
+            //evmVersion: "byzantium"
+        }
+    },
     abiExporter: {
         path: './abi',
         flat: true
@@ -24,5 +34,5 @@ module.exports = {
             url: 'http://api.elastos.io:21636',
             accounts: [`0x${ROPSTEN_PRIVATE_KEY}`]
         },
-    }
+    },
 };

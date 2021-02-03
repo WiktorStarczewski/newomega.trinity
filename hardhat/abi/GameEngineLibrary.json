@@ -81,14 +81,14 @@
       {
         "components": [
           {
-            "internalType": "string",
+            "internalType": "bytes32",
             "name": "nameLhs",
-            "type": "string"
+            "type": "bytes32"
           },
           {
-            "internalType": "string",
+            "internalType": "bytes32",
             "name": "nameRhs",
-            "type": "string"
+            "type": "bytes32"
           },
           {
             "internalType": "uint16[]",
@@ -113,14 +113,14 @@
           {
             "components": [
               {
-                "internalType": "string",
+                "internalType": "uint8",
                 "name": "moveType",
-                "type": "string"
+                "type": "uint8"
               },
               {
-                "internalType": "uint16",
+                "internalType": "uint8",
                 "name": "round",
-                "type": "uint16"
+                "type": "uint8"
               },
               {
                 "internalType": "uint16",
@@ -150,14 +150,14 @@
           {
             "components": [
               {
-                "internalType": "string",
+                "internalType": "uint8",
                 "name": "moveType",
-                "type": "string"
+                "type": "uint8"
               },
               {
-                "internalType": "uint16",
+                "internalType": "uint8",
                 "name": "round",
-                "type": "uint16"
+                "type": "uint8"
               },
               {
                 "internalType": "uint16",
@@ -185,16 +185,6 @@
             "type": "tuple[]"
           },
           {
-            "internalType": "int64[]",
-            "name": "lhsHp",
-            "type": "int64[]"
-          },
-          {
-            "internalType": "int64[]",
-            "name": "rhsHp",
-            "type": "int64[]"
-          },
-          {
             "internalType": "bool",
             "name": "lhsDead",
             "type": "bool"
@@ -216,109 +206,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint16",
-            "name": "cp",
-            "type": "uint16"
-          },
-          {
-            "internalType": "uint16",
-            "name": "hp",
-            "type": "uint16"
-          },
-          {
-            "components": [
-              {
-                "internalType": "uint16",
-                "name": "base",
-                "type": "uint16"
-              },
-              {
-                "internalType": "uint16",
-                "name": "variable",
-                "type": "uint16"
-              }
-            ],
-            "internalType": "struct ShipVariableStat",
-            "name": "attack",
-            "type": "tuple"
-          },
-          {
-            "internalType": "uint16",
-            "name": "defence",
-            "type": "uint16"
-          },
-          {
-            "internalType": "uint16",
-            "name": "speed",
-            "type": "uint16"
-          },
-          {
-            "internalType": "uint16",
-            "name": "range",
-            "type": "uint16"
-          },
-          {
-            "internalType": "uint16",
-            "name": "agility",
-            "type": "uint16"
-          }
-        ],
-        "internalType": "struct Ship[]",
-        "name": "Ships",
-        "type": "tuple[]"
-      },
-      {
-        "internalType": "bool",
-        "name": "isLhs",
-        "type": "bool"
-      },
-      {
-        "internalType": "uint16",
-        "name": "source",
-        "type": "uint16"
-      },
-      {
-        "internalType": "int16",
-        "name": "direction",
-        "type": "int16"
-      },
-      {
-        "internalType": "int16[]",
-        "name": "shipPositionsLhs",
-        "type": "int16[]"
-      },
-      {
-        "internalType": "int16[]",
-        "name": "shipPositionsRhs",
-        "type": "int16[]"
-      },
-      {
-        "internalType": "int64[]",
-        "name": "shipHpsLhs",
-        "type": "int64[]"
-      },
-      {
-        "internalType": "int64[]",
-        "name": "shipHpsRhs",
-        "type": "int64[]"
-      }
-    ],
-    "name": "moveShips",
-    "outputs": [
-      {
-        "internalType": "int16",
-        "name": "",
-        "type": "int16"
-      }
-    ],
-    "stateMutability": "pure",
     "type": "function"
   }
 ]
