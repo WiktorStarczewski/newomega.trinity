@@ -390,11 +390,11 @@ export default class OmegaApp extends Component {
 
     _loadContracts(provider, signer, ownAccount) {
         const gameEngineJson = require('./abi/GameEngine.json');
-        const gameEngineContractAddress = '0x3D057E4c67e1Ed4bea0ea3a3e8D8E88E303Ba034';
+        const gameEngineContractAddress = '0xa0df2C356abeb3f330Bc29D4ff3E60A0dc4048fc';
         const gameEngineContract = new ethers.Contract(gameEngineContractAddress, gameEngineJson, signer);
 
         const gameManagerJson = require('./abi/GameManager.json');
-        const gameManagerContractAddress = '0xb69427964aFe7446514d2a7276f669314eb54b56';
+        const gameManagerContractAddress = '0xD2B6448BBB63076D4fe918AFde604c42F12768aC';
         const gameManagerContract = new ethers.Contract(gameManagerContractAddress, gameManagerJson, signer);
 
         this.attachBlockchainEvents(provider, gameManagerContract, ownAccount);

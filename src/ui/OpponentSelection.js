@@ -31,7 +31,8 @@ export const OpponentSelection = (props) => {
                 <div className="mainMenu">
                     {_.map(opponents, renderOpponent)}
                 </div>
-                <a className="miniLogoBox" href="/">
+                <a className="uiElement cancelBox bottomBox" href="/">
+                    BACK
                 </a>
             </div>
         </div>

@@ -339,7 +339,7 @@ export const Combat = (props) => {
                     <div className="uiElement combatLog">
                         <pre>{combatLog}</pre>
                     </div>
-                    <div className="uiElement doneBox" onClick={() => { setShowingResult(true) }}>
+                    <div className="uiElement doneBox bottomBox" onClick={() => { setShowingResult(true) }}>
                         FINISH
                     </div>
                     <div className="miniLogoBox"></div>

@@ -212,10 +212,11 @@ export const ShipSelection = (props) => {
                     </div>
                     <div className="uiElement chevron left" onClick={prevShip}/>
                     <div className="uiElement chevron right" onClick={nextShip}/>
-                    <div className="uiElement doneBox" onClick={checkEnoughShipsAndDone}>
+                    <div className="uiElement doneBox bottomBox" onClick={checkEnoughShipsAndDone}>
                         DONE
                     </div>
-                    <a className="miniLogoBox" href="/">
+                    <a className="uiElement cancelBox bottomBox" href="/">
+                        BACK
                     </a>
                     <div className="omegaTip">
                         <div className="title">

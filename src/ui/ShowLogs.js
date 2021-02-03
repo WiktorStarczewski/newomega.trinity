@@ -33,7 +33,8 @@ export const ShowLogs = (props) => {
                 <div className="mainMenu">
                     {_.map(logs, renderLog)}
                 </div>
-                <a className="miniLogoBox" href="/">
+                <a className="uiElement cancelBox bottomBox" href="/">
+                    BACK
                 </a>
             </div>
         </div>

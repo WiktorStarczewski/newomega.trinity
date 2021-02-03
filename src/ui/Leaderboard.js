@@ -32,7 +32,8 @@ export const Leaderboard = (props) => {
                 <div className="mainMenu">
                     {_.map(leaderboard, renderEntry)}
                 </div>
-                <a className="miniLogoBox" href="/">
+                <a className="uiElement cancelBox bottomBox" href="/">
+                    BACK
                 </a>
             </div>
         </div>

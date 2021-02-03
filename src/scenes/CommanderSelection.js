@@ -164,10 +164,11 @@ export const CommanderSelection = (props) => {
                     </div>
                     <div className="uiElement chevron left" onClick={prevCommander}/>
                     <div className="uiElement chevron right" onClick={nextCommander}/>
-                    <div className="uiElement doneBox" onClick={onDone}>
+                    <div className="uiElement doneBox bottomBox" onClick={onDone}>
                         DONE
                     </div>
-                    <a className="miniLogoBox" href="/">
+                    <a className="uiElement cancelBox bottomBox" href="/">
+                        BACK
                     </a>
                     <div className="omegaTip">
                         <div className="title">

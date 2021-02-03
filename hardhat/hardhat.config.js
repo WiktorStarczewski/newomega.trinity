@@ -18,6 +18,11 @@ module.exports = {
         ropsten: {
             url: `https://ropsten.infura.io/v3/${INFURA_PROJECT_ID}`,
             accounts: [`0x${ROPSTEN_PRIVATE_KEY}`]
-        }
+        },
+
+        elatest: {
+            url: 'http://api.elastos.io:21636',
+            accounts: [`0x${ROPSTEN_PRIVATE_KEY}`]
+        },
     }
 };
