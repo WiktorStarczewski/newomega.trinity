@@ -9,7 +9,7 @@
     "@babylonjs/gui": "^4.2.0",
     "@babylonjs/loaders": "^4.2.0",
     "@elastosfoundation/trinity-dapp-sdk": "^1.0.24",
-    "@elastosfoundation/trinity-types": "^1.1.68",
+    "@elastosfoundation/trinity-types": "^1.1.118",
     "@ionic/react": "^4.11.0",
     "@ionic/react-router": "^4.11.0",
     "@sentry/react": "^6.0.1",

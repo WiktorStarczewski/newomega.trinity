@@ -21,19 +21,15 @@ export const OpponentSelection = (props) => {
         );
     };
 
+    const opponents = _.clone(props.opponents).reverse();
+
     return (
         <div className="OpponentSelection">
             <div className="ui">
                 <div className="mainTitle">
                 </div>
                 <div className="mainMenu">
-                    {_.map(props.opponents, renderOpponent)}
-                </div>
-                <div className="versionBox uiElement">
-                    Version: 0.0.1 (c) celrisen.eth
-                </div>
-                <div className="ethBalance uiElement">
-
+                    {_.map(opponents, renderOpponent)}
                 </div>
                 <a className="miniLogoBox" href="/">
                 </a>

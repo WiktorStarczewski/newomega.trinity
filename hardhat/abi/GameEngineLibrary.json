@@ -81,6 +81,16 @@
       {
         "components": [
           {
+            "internalType": "string",
+            "name": "nameLhs",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "nameRhs",
+            "type": "string"
+          },
+          {
             "internalType": "uint16[]",
             "name": "selectionLhs",
             "type": "uint16[]"

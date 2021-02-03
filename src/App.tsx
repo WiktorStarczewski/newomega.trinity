@@ -33,9 +33,13 @@ import '@ionic/react/css/display.css';
 import './theme/variables.css';
 
 declare let appManager: AppManagerPlugin.AppManager;
+declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
 const App: React.FC = () => {
   document.addEventListener('deviceready', () => {
+    titleBarManager.setVisibility(
+      1, // HIDDEN
+      1); // HIDDEN
     appManager.setVisible('show');
     window.screen.orientation.lock('landscape');
   }, false);

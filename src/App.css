@@ -66,6 +66,24 @@ canvas {
     border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
+.App .playerName {
+    position: absolute;
+    top: 0.5rem;
+    left: 1rem;
+    font-size: 1.5rem;
+    line-height: 1.5rem;
+}
+
+.App .playerNameInput {
+    background: transparent;
+    color: white;
+    border: none;
+}
+
+.App .playerNameInput:focus {
+    outline: none;
+}
+
 .App .mainMenu {
     position: absolute;
     top: 50%;
@@ -75,10 +93,11 @@ canvas {
     display: flex;
     justify-content: center;
     flex-direction: row;
+    padding: 0 0.5rem;
 }
 
 .App .mainMenu .mainMenuItem {
-    font-size: 0.8rem;
+    font-size: 1rem;
     color: white;
     cursor: pointer;
     flex: 1;
@@ -106,10 +125,17 @@ canvas {
     background-size: cover;
 }
 
-.App .versionBox {
+.App .bottomElement {
     bottom: 0.5rem;
-    right: 0.5rem;
     font-size: 0.5rem;
+}
+
+.App .versionBox {
+    right: 0.5rem;
+}
+
+.App .ethBalance {
+    left: 0.5rem;
 }
 
 .App .miniLogoBox {
@@ -208,15 +234,32 @@ canvas {
 
 @keyframes pulse {
     0% {
-        transform: scale(0.8);
+        transform: scale(0.9);
     }
 
     70% {
-        transform: scale(1.5);
+        transform: scale(1.2);
     }
 
     100% {
-        transform: scale(0.8);
+        transform: scale(0.9);
     }
 }
 
+@keyframes pulsebackground {
+    0% {
+        background: white;
+    }
+
+    70% {
+        background: rgba(115, 255, 190, 0.4);
+    }
+
+    100% {
+        background: white;
+    }
+}
+
+.App .mainMenu .mainMenuItem.unread {
+    animation: pulsebackground 1s infinite;
+}

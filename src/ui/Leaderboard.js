@@ -19,19 +19,18 @@ export const Leaderboard = (props) => {
         );
     };
 
+    const leaderboard = _.clone(props.leaderboard);
+    leaderboard.sort((lhs, rhs) => {
+        return rhs.wins.toNumber() - lhs.wins.toNumber();
+    });
+
     return (
         <div className="Leaderboard">
             <div className="ui">
                 <div className="mainTitle">
                 </div>
                 <div className="mainMenu">
-                    {_.map(props.leaderboard, renderEntry)}
-                </div>
-                <div className="versionBox uiElement">
-                    Version: 0.0.1 (c) celrisen.eth
-                </div>
-                <div className="ethBalance uiElement">
-
+                    {_.map(leaderboard, renderEntry)}
                 </div>
                 <a className="miniLogoBox" href="/">
                 </a>

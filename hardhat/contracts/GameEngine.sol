@@ -14,6 +14,8 @@ struct Move {
 }
 
 struct FightResult {
+  string nameLhs;
+  string nameRhs;
   uint16[] selectionLhs;
   uint16[] selectionRhs;
   uint16 commanderLhs;
@@ -117,7 +119,7 @@ library GameEngineLibrary {
       getRandomInt(Ships[source].attack.variable);
     uint16 defence = Ships[target].defence;
     uint16 accuracy = 100 - Ships[target].agility;
-    uint64 damagePerShip = (attack - defence) * accuracy;
+    uint64 damagePerShip = (attack - defence) * accuracy / 10;
     uint16 sourceShipsCount = uint16((sourceHp / Ships[source].hp) + 1);
     uint64 capDamage = uint64(sourceShipsCount) * uint64(Ships[target].hp);
     uint64 damage = damagePerShip * uint64(sourceShipsCount);
@@ -253,6 +255,8 @@ library GameEngineLibrary {
     delete shipPositionsLhs;
 
     return FightResult({
+      nameLhs: '',
+      nameRhs: '',
       selectionLhs: selectionLhs,
       selectionRhs: selectionRhs,
       commanderLhs: commanderLhs,

@@ -28,6 +28,16 @@
       {
         "components": [
           {
+            "internalType": "string",
+            "name": "nameLhs",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "nameRhs",
+            "type": "string"
+          },
+          {
             "internalType": "uint16[]",
             "name": "selectionLhs",
             "type": "uint16[]"
@@ -172,12 +182,27 @@
         "internalType": "uint16",
         "name": "commander",
         "type": "uint16"
+      },
+      {
+        "internalType": "string",
+        "name": "playerName",
+        "type": "string"
       }
     ],
     "name": "attack",
     "outputs": [
       {
         "components": [
+          {
+            "internalType": "string",
+            "name": "nameLhs",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "nameRhs",
+            "type": "string"
+          },
           {
             "internalType": "uint16[]",
             "name": "selectionLhs",

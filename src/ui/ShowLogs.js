@@ -16,12 +16,14 @@ export const ShowLogs = (props) => {
                 className="mainMenuItem"
                 onClick={() => { selectLog(log) }}
             >
-                <span className="address">{log.args[0]}</span>
-                <span className="vs"> vs </span>
-                <span className="address">{log.args[1]}</span>
+                <span className="address">{log.args[2].nameLhs}</span>
+                <span className="vs"> VS </span>
+                <span className="address">{log.args[2].nameRhs}</span>
             </div>
         );
     };
+
+    const logs = _.clone(props.logs).reverse();
 
     return (
         <div className="ShowLogs">
@@ -29,13 +31,7 @@ export const ShowLogs = (props) => {
                 <div className="mainTitle">
                 </div>
                 <div className="mainMenu">
-                    {_.map(props.logs, renderLog)}
-                </div>
-                <div className="versionBox uiElement">
-                    Version: 0.0.1 (c) celrisen.eth
-                </div>
-                <div className="ethBalance uiElement">
-
+                    {_.map(logs, renderLog)}
                 </div>
                 <a className="miniLogoBox" href="/">
                 </a>

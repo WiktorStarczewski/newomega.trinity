@@ -81,11 +81,14 @@ contract GameManager {
         return playerDefenceMapping[msg.sender];
     }
 
-    function attack(address enemy, uint16[] memory selection, uint16 commander) public returns (FightResult memory result) {
+    function attack(address enemy, uint16[] memory selection, uint16 commander, string memory playerName) public returns (FightResult memory result) {
         require(playerDefenceMapping[enemy].isInitialised, 'Can only attack a registered defence');
         result = gameEngine.fight(
             selection, playerDefenceMapping[enemy].defenceSelection,
             commander, playerDefenceMapping[enemy].commander);
+
+        result.nameLhs = playerName;
+        result.nameRhs = playerDefenceMapping[enemy].name;
 
         if (!playerDataMapping[msg.sender].isInitialised) {
             playerDataMapping[msg.sender].player = msg.sender;

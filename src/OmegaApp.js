@@ -46,8 +46,12 @@ export default class OmegaApp extends Component {
         this.defaultUnloadedState = {
             ownAccount: null,
             web3Loaded: false,
+            ethBalance: 0,
+            blockNumber: 0,
             gameEngineContract: null,
             gameManagerContract: null,
+            hasUnseenFights: false,
+            playerName: window.localStorage.getItem('OmegaPlayerName') || 'Anonymous',
         };
 
         this.state = {
@@ -73,11 +77,13 @@ export default class OmegaApp extends Component {
                 loading: true,
             });
 
-            await this.state.gameManagerContract.registerDefence(
+            const tx = await this.state.gameManagerContract.registerDefence(
                 this.state.trainingSelfSelection,
                 commander,
-                this.state.ownAccount
+                this.state.playerName
             );
+
+            await tx.wait();
 
             this.setState(this.defaultLoadedState);
         } else if (this.state.settingAttack) {
@@ -85,11 +91,14 @@ export default class OmegaApp extends Component {
                 loading: true,
             });
 
-            await this.state.gameManagerContract.attack(
+            const tx = await this.state.gameManagerContract.attack(
                 this.state.trainingOpponent,
                 this.state.trainingSelfSelection,
-                commander
+                commander,
+                this.state.playerName
             );
+
+            await tx.wait();
 
             this.setState(this.defaultLoadedState);
         } else {
@@ -123,6 +132,13 @@ export default class OmegaApp extends Component {
         }, 0);
     }
 
+    handlePlayerNameChange(e) {
+        window.localStorage.setItem('OmegaPlayerName', e.target.value);
+        this.setState({
+            playerName: e.target.value,
+        });
+    }
+
     training() {
         const trainingOpponentSelection = [25, 18, 16, 6];
 
@@ -150,6 +166,24 @@ export default class OmegaApp extends Component {
         });
     }
 
+    attachBlockchainEvents(provider, gameManagerContract, ownAccount) {
+        const filter = gameManagerContract.filters.FightComplete();
+        filter.attacker = ownAccount;
+
+        provider.on(filter, () => {
+            this.setState({
+                hasUnseenFights: true,
+            });
+        });
+
+        provider.on('block', (blockNumber) => {
+            this._checkBalance(provider, ownAccount);
+            this.setState({
+                blockNumber,
+            });
+        });
+    }
+
     async showLogs() {
         const filter = this.state.gameManagerContract.filters.FightComplete();
         filter.fromBlock = this.state.provider.getBlockNumber().then((b) => b - 10000);
@@ -169,6 +203,7 @@ export default class OmegaApp extends Component {
             mode: Modes.ShowLogs,
             logs: logsParsed,
             loading: false,
+            hasUnseenFights: false,
         });
     }
 
@@ -240,20 +275,27 @@ export default class OmegaApp extends Component {
     }
 
     render() {
+        const logsClassName = `mainMenuItem ${this.state.hasUnseenFights ? 'unread' : ''}`;
+        const ethBalanceString = this._formatBalance(ethers.utils.formatEther(this.state.ethBalance));
+
         return (
             <div className="App">
                 {this.state.mode === Modes.MainScreen &&
                     <div className="mainScreen ui">
                         <div className="mainTitle">
                         </div>
+                        <div className="playerName">
+                            <input autoCorrect="off" type="text" className="playerNameInput" value={this.state.playerName}
+                                onChange={this.handlePlayerNameChange.bind(this)}/>
+                        </div>
                         <div className="mainMenu">
                             <div className="mainMenuItem" onClick={this.training.bind(this)}>
                                 TRAINING
                             </div>
                             <div className="mainMenuItem" onClick={this.commanders.bind(this)}>
-                                COMMANDERS
+                                ACADEMY
                             </div>
-                            <div className="mainMenuItem" onClick={this.showLogs.bind(this)}>
+                            <div className={logsClassName} onClick={this.showLogs.bind(this)}>
                                 LOGS
                             </div>
                             <div className="mainMenuItem" onClick={this.defend.bind(this)}>
@@ -263,11 +305,14 @@ export default class OmegaApp extends Component {
                                 ATTACK
                             </div>
                             <div className="mainMenuItem" onClick={this.leaderboard.bind(this)}>
-                                LEADERBOARD
+                                RANKING
                             </div>
                         </div>
-                        <div className="versionBox uiElement">
+                        <div className="versionBox uiElement bottomElement">
                             Version: 0.0.1 (c) celrisen.eth
+                        </div>
+                        <div className="ethBalance uiElement bottomElement">
+                            Ξ{ethBalanceString} Block: {this.state.blockNumber}
                         </div>
                     </div>
                 }
@@ -313,6 +358,10 @@ export default class OmegaApp extends Component {
         this._initWeb3();
     }
 
+    _formatBalance(balance) {
+        return parseFloat(balance, 10).toFixed(4).toString();
+    }
+
     async _initWeb3() {
         // const provider = new TrinitySDK.Ethereum.Web3.Providers.TrinityWeb3Provider();
         const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -320,25 +369,35 @@ export default class OmegaApp extends Component {
 
         // const provider = new Web3(window.ethereum);
         const accounts = await window.ethereum.send('eth_requestAccounts');
+        const ownAccount = accounts.result[0];
 
+        await this._checkBalance(provider, ownAccount);
         this.setState({
             provider,
-            ownAccount: accounts.result[0],
+            ownAccount,
             signer,
         }, () => {
-            this._loadContracts(signer);
+            this._loadContracts(provider, signer, ownAccount);
         });
     }
 
-    _loadContracts(signer) {
+    async _checkBalance(provider, ownAccount) {
+        const ethBalance = await provider.getBalance(ownAccount);
+        this.setState({
+            ethBalance,
+        });
+    }
+
+    _loadContracts(provider, signer, ownAccount) {
         const gameEngineJson = require('./abi/GameEngine.json');
-        const gameEngineContractAddress = '0x39a3c0cDddF3f46A1b7462e911508E20230e6034';
+        const gameEngineContractAddress = '0x3D057E4c67e1Ed4bea0ea3a3e8D8E88E303Ba034';
         const gameEngineContract = new ethers.Contract(gameEngineContractAddress, gameEngineJson, signer);
 
         const gameManagerJson = require('./abi/GameManager.json');
-        const gameManagerContractAddress = '0xc7ed5147cd9C348fdd3Fa954c3391597873ec010';
+        const gameManagerContractAddress = '0xb69427964aFe7446514d2a7276f669314eb54b56';
         const gameManagerContract = new ethers.Contract(gameManagerContractAddress, gameManagerJson, signer);
 
+        this.attachBlockchainEvents(provider, gameManagerContract, ownAccount);
         this.setState({
             gameEngineContract,
             gameManagerContract,
