@@ -124,6 +124,11 @@
             "internalType": "uint8",
             "name": "rounds",
             "type": "uint8"
+          },
+          {
+            "internalType": "uint256",
+            "name": "seed",
+            "type": "uint256"
           }
         ],
         "indexed": false,
@@ -422,6 +427,161 @@
     "name": "registerDefence",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "seed",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint16[]",
+        "name": "selectionLhs",
+        "type": "uint16[]"
+      },
+      {
+        "internalType": "uint16[]",
+        "name": "selectionRhs",
+        "type": "uint16[]"
+      },
+      {
+        "internalType": "uint16",
+        "name": "commanderLhs",
+        "type": "uint16"
+      },
+      {
+        "internalType": "uint16",
+        "name": "commanderRhs",
+        "type": "uint16"
+      }
+    ],
+    "name": "replay",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint16[]",
+            "name": "selectionLhs",
+            "type": "uint16[]"
+          },
+          {
+            "internalType": "uint16[]",
+            "name": "selectionRhs",
+            "type": "uint16[]"
+          },
+          {
+            "internalType": "uint16",
+            "name": "commanderLhs",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "commanderRhs",
+            "type": "uint16"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint8",
+                "name": "moveType",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint8",
+                "name": "round",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint8",
+                "name": "source",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint8",
+                "name": "target",
+                "type": "uint8"
+              },
+              {
+                "internalType": "int8",
+                "name": "targetPosition",
+                "type": "int8"
+              },
+              {
+                "internalType": "uint32",
+                "name": "damage",
+                "type": "uint32"
+              }
+            ],
+            "internalType": "struct Move[]",
+            "name": "lhs",
+            "type": "tuple[]"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint8",
+                "name": "moveType",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint8",
+                "name": "round",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint8",
+                "name": "source",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint8",
+                "name": "target",
+                "type": "uint8"
+              },
+              {
+                "internalType": "int8",
+                "name": "targetPosition",
+                "type": "int8"
+              },
+              {
+                "internalType": "uint32",
+                "name": "damage",
+                "type": "uint32"
+              }
+            ],
+            "internalType": "struct Move[]",
+            "name": "rhs",
+            "type": "tuple[]"
+          },
+          {
+            "internalType": "bool",
+            "name": "lhsDead",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "rhsDead",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint8",
+            "name": "rounds",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint256",
+            "name": "seed",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct FightResult",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   }
 ]

@@ -21,6 +21,7 @@ struct FightResult {
   bool lhsDead;
   bool rhsDead;
   uint8 rounds;
+  uint seed;
 }
 
 struct ShipVariableStat {
@@ -127,13 +128,8 @@ library GameEngineLibrary {
     return (uint(minDistance) == maxInt) ? -1 : int8(minDistanceIndex);
   }
 
-  function getRandomInt(uint16 maxValue) private view returns (uint16) {
-    return uint16(uint(keccak256(abi.encodePacked(block.difficulty, block.timestamp, msg.sender))) % maxValue);
-  }
-
-  function calculateDamage(Ship[] memory Ships, uint8 source, uint8 target, uint64 sourceHp) internal view returns (uint32) {
-    uint16 attack = Ships[source].attack.base +
-      getRandomInt(Ships[source].attack.variable);
+  function calculateDamage(uint seed, Ship[] memory Ships, uint8 source, uint8 target, uint64 sourceHp) internal pure returns (uint32) {
+    uint16 attack = Ships[source].attack.base + uint16(seed % Ships[source].attack.variable);
     uint16 defence = Ships[target].defence;
     uint16 accuracy = 100 - Ships[target].agility;
     uint32 damagePerShip = (attack - defence) * accuracy / 10;
@@ -206,7 +202,7 @@ library GameEngineLibrary {
     });
   }
 
-  function fight(Ship[] memory Ships, uint16[] memory selectionLhs, uint16[] memory selectionRhs, uint16 commanderLhs, uint16 commanderRhs) internal view returns (FightResult memory) {
+  function fight(uint seed, bool logMoves, Ship[] memory Ships, uint16[] memory selectionLhs, uint16[] memory selectionRhs, uint16 commanderLhs, uint16 commanderRhs) internal pure returns (FightResult memory) {
     require(selectionLhs.length == 4, 'Selection needs to have 4 elements');
     require(selectionRhs.length == 4, 'Selection needs to have 4 elements');
 
@@ -231,22 +227,30 @@ library GameEngineLibrary {
     }
 
     FightStateInternal memory fightState;
-    fightState.lhsMoves = new Move[](MAX_ROUNDS * MAX_SHIPS);
-    fightState.rhsMoves = new Move[](MAX_ROUNDS * MAX_SHIPS);
+    if (logMoves) {
+      fightState.lhsMoves = new Move[](MAX_ROUNDS * MAX_SHIPS);
+      fightState.rhsMoves = new Move[](MAX_ROUNDS * MAX_SHIPS);
+    }
 
     for (fightState.round = 0; fightState.round < MAX_ROUNDS && !isDead(shipHpsLhs) && !isDead(shipHpsRhs); fightState.round++) {
       for (fightState.currentShip = 0; fightState.currentShip < MAX_SHIPS; fightState.currentShip++) {
         if (shipHpsLhs[fightState.currentShip] > 0) {
           int8 target = getTarget(Ships, fightState.currentShip, shipPositionsLhs, shipPositionsRhs, shipHpsRhs);
           if (target >= 0) {
-            uint32 damage = calculateDamage(Ships, fightState.currentShip, uint8(target),
+            uint32 damage = calculateDamage(seed, Ships, fightState.currentShip, uint8(target),
               uint64(shipHpsLhs[fightState.currentShip]));
             shipHpsRhs[uint8(target)] -= int64(damage);
-            logShoot(fightState.loggedLhsMoves++, fightState.round, fightState.lhsMoves, fightState.currentShip, uint8(target), damage);
+            if (logMoves) {
+              logShoot(fightState.loggedLhsMoves++, fightState.round, fightState.lhsMoves, fightState.currentShip, uint8(target), damage);
+            }
           } else {
-            shipPositionsLhs[fightState.currentShip] = moveShips(Ships, true, fightState.currentShip, -1, shipPositionsLhs,
+            shipPositionsLhs[fightState.currentShip] = moveShips(
+              Ships, true, fightState.currentShip, -1, shipPositionsLhs,
               shipPositionsRhs, shipHpsLhs, shipHpsRhs);
-            logMove(fightState.loggedLhsMoves++, fightState.round, fightState.lhsMoves, fightState.currentShip, shipPositionsLhs[fightState.currentShip]);
+            if (logMoves) {
+              logMove(fightState.loggedLhsMoves++, fightState.round, fightState.lhsMoves,
+                fightState.currentShip, shipPositionsLhs[fightState.currentShip]);
+            }
           }
         }
       }
@@ -255,25 +259,31 @@ library GameEngineLibrary {
         if (shipHpsRhs[fightState.currentShip] > 0) {
           int8 target = getTarget(Ships, fightState.currentShip, shipPositionsRhs, shipPositionsLhs, shipHpsLhs);
           if (target >= 0) {
-            uint32 damage = calculateDamage(Ships, fightState.currentShip, uint8(target),
+            uint32 damage = calculateDamage(seed, Ships, fightState.currentShip, uint8(target),
               uint64(shipHpsRhs[fightState.currentShip]));
             shipHpsLhs[uint8(target)] -= int64(damage);
-            logShoot(fightState.loggedRhsMoves++, fightState.round, fightState.rhsMoves, fightState.currentShip, uint8(target), damage);
+            if (logMoves) {
+              logShoot(fightState.loggedRhsMoves++, fightState.round, fightState.rhsMoves, fightState.currentShip, uint8(target), damage);
+            }
           } else {
             shipPositionsRhs[fightState.currentShip] = moveShips(Ships, false, fightState.currentShip, 1, shipPositionsLhs,
               shipPositionsRhs, shipHpsLhs, shipHpsRhs);
-            logMove(fightState.loggedRhsMoves++, fightState.round, fightState.rhsMoves, fightState.currentShip, shipPositionsRhs[fightState.currentShip]);
+            if (logMoves) {
+              logMove(fightState.loggedRhsMoves++, fightState.round, fightState.rhsMoves, fightState.currentShip, shipPositionsRhs[fightState.currentShip]);
+            }
           }
         }
       }
     }
 
-    fightState.lhsOptimisedMoves = new Move[](fightState.round * MAX_SHIPS);
-    fightState.rhsOptimisedMoves = new Move[](fightState.round * MAX_SHIPS);
+    if (logMoves) {
+      fightState.lhsOptimisedMoves = new Move[](fightState.round * MAX_SHIPS);
+      fightState.rhsOptimisedMoves = new Move[](fightState.round * MAX_SHIPS);
 
-    for (uint16 i = 0; i < fightState.round * MAX_SHIPS; i++) {
-      fightState.lhsOptimisedMoves[i] = fightState.lhsMoves[i];
-      fightState.rhsOptimisedMoves[i] = fightState.rhsMoves[i];
+      for (uint16 i = 0; i < fightState.round * MAX_SHIPS; i++) {
+        fightState.lhsOptimisedMoves[i] = fightState.lhsMoves[i];
+        fightState.rhsOptimisedMoves[i] = fightState.rhsMoves[i];
+      }
     }
 
     delete shipPositionsRhs;
@@ -288,7 +298,8 @@ library GameEngineLibrary {
       rhs: fightState.rhsOptimisedMoves,
       lhsDead: isDead(shipHpsLhs),
       rhsDead: isDead(shipHpsRhs),
-      rounds: fightState.round
+      rounds: fightState.round,
+      seed: 0
     });
   }
 }
@@ -330,11 +341,18 @@ contract NewOmega {
     return Ships;
   }
 
-  function fight(uint16[] memory selectionLhs, uint16[] memory selectionRhs, uint16 commanderLhs, uint16 commanderRhs) private view returns (FightResult memory) {
+  function replay(uint seed, uint16[] memory selectionLhs, uint16[] memory selectionRhs, uint16 commanderLhs, uint16 commanderRhs) public view returns (FightResult memory) {
       require(selectionLhs.length == 4, 'Selection needs to have 4 elements');
       require(selectionRhs.length == 4, 'Selection needs to have 4 elements');
 
-      return GameEngineLibrary.fight(Ships, selectionLhs, selectionRhs, commanderLhs, commanderRhs);
+      return GameEngineLibrary.fight(seed, true, Ships, selectionLhs, selectionRhs, commanderLhs, commanderRhs);
+  }
+
+  function fight(uint seed, uint16[] memory selectionLhs, uint16[] memory selectionRhs, uint16 commanderLhs, uint16 commanderRhs) private view returns (FightResult memory) {
+      require(selectionLhs.length == 4, 'Selection needs to have 4 elements');
+      require(selectionRhs.length == 4, 'Selection needs to have 4 elements');
+
+      return GameEngineLibrary.fight(seed, false, Ships, selectionLhs, selectionRhs, commanderLhs, commanderRhs);
   }
 
   event FightComplete(
@@ -391,8 +409,10 @@ contract NewOmega {
   function attack(address enemy, uint16[] memory selection, uint16 commander) public {
     require(playerDefenceMapping[enemy].isInitialised, 'Can only attack a registered defence');
 
+    uint seed = uint(keccak256(abi.encodePacked(block.difficulty, block.timestamp, msg.sender)));
+
     FightResult memory result = fight(
-      selection, playerDefenceMapping[enemy].defenceSelection,
+      seed, selection, playerDefenceMapping[enemy].defenceSelection,
       commander, playerDefenceMapping[enemy].commander);
 
     if (result.lhsDead) {
@@ -403,6 +423,7 @@ contract NewOmega {
       playerDataMapping[enemy].losses++;
     }
 
+    result.seed = seed;
     emit FightComplete(msg.sender, enemy, result);
   }
 

@@ -199,12 +199,25 @@ export default class OmegaApp extends Component {
             loading: true,
         });
 
-        const logs = await this.state.provider.getLogs(filter);
+        let logs;
+
+        try {
+            logs = await this.state.provider.getLogs(filter);
+        } catch (error) {
+            return this.setState(this.defaultLoadedState);
+        }
+
         const logsParsed = _.map(logs, (log) => {
             return this.state.newOmegaContract.interface.parseLog(log);
         });
 
-        const defenders = await this.state.newOmegaContract.getAllDefenders();
+        let defenders;
+
+        try {
+            defenders = await this.state.newOmegaContract.getAllDefenders();
+        } catch (error) {
+            return this.setState(this.defaultLoadedState);
+        }
 
         this.setState({
             mode: Modes.ShowLogs,
@@ -215,8 +228,25 @@ export default class OmegaApp extends Component {
         });
     }
 
-    logSelectionDone(log) {
-        const result = log.args[2];
+    async logSelectionDone(log) {
+        const metaResult = log.args[2];
+
+        this.setState({
+            loading: true,
+        });
+
+        let result;
+
+        try {
+            result = await this.state.newOmegaContract.replay(
+                metaResult.seed,
+                metaResult.selectionLhs,
+                metaResult.selectionRhs,
+                metaResult.commanderLhs,
+                metaResult.commanderRhs);
+        } catch (error) {
+            return this.setState(this.defaultLoadedState);
+        }
 
         const _parseHp = (hp) => {
             return _.map(hp, (hpInst) => {
@@ -244,6 +274,7 @@ export default class OmegaApp extends Component {
             trainingSelfCommander: resultJson.commanderLhs,
             trainingOpponentSelection: resultJson.selectionRhs,
             trainingResult: resultJson,
+            loading: false,
         });
     }
 
@@ -252,7 +283,13 @@ export default class OmegaApp extends Component {
             loading: true,
         });
 
-        const defenders = await this.state.newOmegaContract.getAllDefenders();
+        let defenders;
+
+        try {
+            defenders = await this.state.newOmegaContract.getAllDefenders();
+        } catch (error) {
+            return this.setState(this.defaultLoadedState);
+        }
 
         this.setState({
             mode: Modes.OpponentSelection,
@@ -266,7 +303,13 @@ export default class OmegaApp extends Component {
             loading: true,
         });
 
-        const leaderboard = await this.state.newOmegaContract.getLeaderboard();
+        let leaderboard;
+
+        try {
+            leaderboard = await this.state.newOmegaContract.getLeaderboard();
+        } catch (error) {
+            return this.setState(this.defaultLoadedState);
+        }
 
         this.setState({
             mode: Modes.Leaderboard,
@@ -392,7 +435,7 @@ export default class OmegaApp extends Component {
 
     _loadContracts(provider, signer, ownAccount) {
         const newOmegaJson = require('./abi/NewOmega.json');
-        const newOmegaAddress = '0xd77993D10b39Ff177b4881FBbd3615320385c3FE';
+        const newOmegaAddress = '0xB27C75147596E3C6425c4d3256cBd3f918bfcb43';
         const newOmegaContract = new ethers.Contract(newOmegaAddress, newOmegaJson, signer);
 
         this.attachBlockchainEvents(provider, newOmegaContract, ownAccount);
