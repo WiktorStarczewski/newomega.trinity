@@ -7,10 +7,16 @@ import { Ships } from '../definitions/Ships';
 import { OmegaLoadingScreen } from '../common/OmegaLoadingScreen';
 import './ShipSelection.css';
 
+const getCurrentCP = (selectedShips) => {
+    return _.reduce(selectedShips, (memo, num, index) => {
+        return memo + (num || 0) * Ships[index].stats.cp;
+    }, 0);
+};
+
 export const ShipSelection = (props) => {
     const [ currentShip, setCurrentShip ] = useState(0);
-    const [ selectedShips, setSelectedShips ] = useState(_.map(Ships, () => { return 0 }));
-    const [ currentCp, setCurrentCp ] = useState(0);
+    const [ selectedShips, setSelectedShips ] = useState(_.clone(props.defaultShips));
+    const [ currentCp, setCurrentCp ] = useState(getCurrentCP(props.defaultShips));
     const [ scene, setScene ] = useState(null);
     const [ loadedMeshes, setLoadedMeshes ] = useState([]);
     const [ resourcesLoaded, setResourcesLoaded ] = useState(false);
@@ -28,12 +34,6 @@ export const ShipSelection = (props) => {
         const newShipSafe = newShip < 0 ? Ships.length - 1 : newShip;
         setCurrentShip(newShipSafe);
         loadCurrentShip(newShipSafe, scene);
-    };
-
-    const getCurrentCP = (selectedShips) => {
-        return _.reduce(selectedShips, (memo, num, index) => {
-            return memo + (num || 0) * Ships[index].stats.cp;
-        }, 0);
     };
 
     const addShip = () => {
@@ -152,8 +152,6 @@ export const ShipSelection = (props) => {
         }
     };
 
-    const shipAdderClassName = `addOrRemoveShip addShip highlightOverModal`;
-
     return (
         <div className="ShipSelection">
             <Engine antialias={true} adaptToDeviceRatio={true} canvasId="ship-selection">
@@ -188,7 +186,7 @@ export const ShipSelection = (props) => {
                         </div>
                     </div>
                     <div className="uiElement sideBox shipControls">
-                        <div className={shipAdderClassName} onClick={addShip}>
+                        <div className="addOrRemoveShip addShip" onClick={addShip}>
                             +
                         </div>
                         <div>

@@ -8,8 +8,8 @@ import { Combat } from './scenes/Combat';
 import { OpponentSelection } from './ui/OpponentSelection';
 import { Leaderboard } from './ui/Leaderboard';
 import { ShowLogs } from './ui/ShowLogs';
-import { GameEngine } from './definitions/GameEngine';
 import { Ships } from './definitions/Ships';
+import { FastProvider } from './common/FastProvider';
 import _ from 'underscore';
 
 
@@ -24,6 +24,8 @@ const Modes = {
     ShowLogs: 6,
     Leaderboard: 7,
 };
+
+const TRAINING_SELECTION = [25, 18, 16, 6];
 
 export default class OmegaApp extends Component {
     constructor(props) {
@@ -61,22 +63,18 @@ export default class OmegaApp extends Component {
     }
 
     shipSelectionDone(selection) {
-        const trainingResult = !this.state.settingDefence &&
-            GameEngine(selection, this.state.trainingOpponentSelection);
-
         this.setState({
             mode: Modes.CommanderSelection,
             trainingSelfSelection: selection,
-            trainingResult,
         });
     }
 
     async commanderSelectionDone(commander) {
-        if (this.state.settingDefence) {
-            this.setState({
-                loading: true,
-            });
+        this.setState({
+            loading: true,
+        });
 
+        if (this.state.settingDefence) {
             try {
                 const tx = await this.state.newOmegaContract.registerDefence(
                     this.state.trainingSelfSelection,
@@ -87,13 +85,7 @@ export default class OmegaApp extends Component {
                 await tx.wait();
             } catch (error) {
             }
-
-            this.setState(this.defaultLoadedState);
         } else if (this.state.settingAttack) {
-            this.setState({
-                loading: true,
-            });
-
             try {
                 const tx = await this.state.newOmegaContract.attack(
                     this.state.trainingOpponent,
@@ -104,14 +96,30 @@ export default class OmegaApp extends Component {
                 await tx.wait();
             } catch (error) {
             }
-
-            this.setState(this.defaultLoadedState);
         } else {
-            this.setState({
+            const seed = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+            let result;
+
+            try {
+                result = await this.state.newOmegaContract.replay(
+                    seed,
+                    this.state.trainingSelfSelection,
+                    this.state.trainingOpponentSelection,
+                    commander,
+                    this.state.trainingOpponentCommander
+                );
+            } catch (error) {
+                return this.setState(this.defaultLoadedState);
+            }
+
+            return this.setState({
                 mode: Modes.Combat,
                 trainingSelfCommander: commander,
+                trainingResult: result,
             });
         }
+
+        this.setState(this.defaultLoadedState);
     }
 
     commanderPreviewDone() {
@@ -145,11 +153,12 @@ export default class OmegaApp extends Component {
     }
 
     training() {
-        const trainingOpponentSelection = [25, 18, 16, 6];
+        const trainingOpponentSelection = TRAINING_SELECTION;
 
         this.setState({
             mode: Modes.ShipSelection,
             trainingOpponentSelection,
+            trainingOpponentCommander: 0,
             trainingCp: this._selectionToCp(trainingOpponentSelection),
         });
     }
@@ -160,14 +169,29 @@ export default class OmegaApp extends Component {
         });
     }
 
-    defend() {
-        const trainingOpponentSelection = [25, 18, 16, 6];
+    async defend() {
+        this.setState({
+            loading: true,
+        });
+
+        let myDefence;
+
+        try{
+            myDefence = await this.state.newOmegaContract.getOwnDefence();
+        } catch (error) {
+            return this.setState(this.defaultLoadedState);
+        }
+
+        const trainingOpponentSelection = myDefence && myDefence.isInitialised
+            ? myDefence.defenceSelection
+            : TRAINING_SELECTION;
 
         this.setState({
             mode: Modes.ShipSelection,
             settingDefence: true,
             trainingOpponentSelection,
             trainingCp: this._selectionToCp(trainingOpponentSelection),
+            loading: false,
         });
     }
 
@@ -368,7 +392,9 @@ export default class OmegaApp extends Component {
                     </div>
                 }
                 {this.state.mode === Modes.ShipSelection &&
-                    <ShipSelection maxCp={this.state.trainingCp} onDone={this.shipSelectionDone.bind(this)}/>
+                    <ShipSelection maxCp={this.state.trainingCp}
+                        defaultShips={this.state.trainingOpponentSelection}
+                        onDone={this.shipSelectionDone.bind(this)}/>
                 }
                 {this.state.mode === Modes.CommanderSelection &&
                     <CommanderSelection onDone={this.commanderSelectionDone.bind(this)}/>
@@ -401,6 +427,14 @@ export default class OmegaApp extends Component {
                     style={this.state.web3Loaded && !this.state.loading ? {display: 'none'} : {}}>
                     <div className="logo"/>
                     <div className="progressOuter progress-line"/>
+                    <div className="status">
+                        <span className="blockchain">
+                            Waiting for blockchain...
+                        </span>
+                        <span className="assets">
+                            Loading assets...
+                        </span>
+                    </div>
                 </div>
             </div>
         );
@@ -416,7 +450,7 @@ export default class OmegaApp extends Component {
 
     async _initWeb3() {
         // const provider = new TrinitySDK.Ethereum.Web3.Providers.TrinityWeb3Provider();
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const provider = new FastProvider(window.ethereum);
         const signer = provider.getSigner();
 
         // const provider = new Web3(window.ethereum);
@@ -442,7 +476,7 @@ export default class OmegaApp extends Component {
 
     _loadContracts(provider, signer, ownAccount) {
         const newOmegaJson = require('./abi/NewOmega.json');
-        const newOmegaAddress = '0xd4BCEB5e9C0c887B6a15239aAB3734EC741c3571';
+        const newOmegaAddress = '0x74691ecA89eb9b842932ddEB9111c3CE21F9D6Be';
         const newOmegaContract = new ethers.Contract(newOmegaAddress, newOmegaJson, signer);
 
         this.attachBlockchainEvents(provider, newOmegaContract, ownAccount);

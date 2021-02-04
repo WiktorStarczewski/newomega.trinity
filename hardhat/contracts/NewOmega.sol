@@ -12,10 +12,10 @@ struct Move {
 }
 
 struct FightResult {
-  uint16[] selectionLhs;
-  uint16[] selectionRhs;
-  uint16 commanderLhs;
-  uint16 commanderRhs;
+  uint8[] selectionLhs;
+  uint8[] selectionRhs;
+  uint8 commanderLhs;
+  uint8 commanderRhs;
   Move[] lhs;
   Move[] rhs;
   bool lhsDead;
@@ -51,8 +51,8 @@ struct FightStateInternal {
 struct PlayerDefence {
   address player;
   bool isInitialised;
-  uint16[] defenceSelection;
-  uint16 commander;
+  uint8[] defenceSelection;
+  uint8 commander;
   bytes32 name;
 }
 
@@ -200,7 +200,7 @@ library GameEngineLibrary {
     });
   }
 
-  function fight(uint seed, bool logMoves, Ship[] memory Ships, uint16[] memory selectionLhs, uint16[] memory selectionRhs, uint16 commanderLhs, uint16 commanderRhs) internal pure returns (FightResult memory) {
+  function fight(uint seed, bool logMoves, Ship[] memory Ships, uint8[] memory selectionLhs, uint8[] memory selectionRhs, uint8 commanderLhs, uint8 commanderRhs) internal pure returns (FightResult memory) {
     require(selectionLhs.length == 4, 'Selection needs to have 4 elements');
     require(selectionRhs.length == 4, 'Selection needs to have 4 elements');
 
@@ -329,14 +329,14 @@ contract NewOmega {
     return Ships;
   }
 
-  function replay(uint seed, uint16[] memory selectionLhs, uint16[] memory selectionRhs, uint16 commanderLhs, uint16 commanderRhs) public view returns (FightResult memory) {
+  function replay(uint seed, uint8[] memory selectionLhs, uint8[] memory selectionRhs, uint8 commanderLhs, uint8 commanderRhs) public view returns (FightResult memory) {
       require(selectionLhs.length == 4, 'Selection needs to have 4 elements');
       require(selectionRhs.length == 4, 'Selection needs to have 4 elements');
 
       return GameEngineLibrary.fight(seed, true, Ships, selectionLhs, selectionRhs, commanderLhs, commanderRhs);
   }
 
-  function fight(uint seed, uint16[] memory selectionLhs, uint16[] memory selectionRhs, uint16 commanderLhs, uint16 commanderRhs) private view returns (FightResult memory) {
+  function fight(uint seed, uint8[] memory selectionLhs, uint8[] memory selectionRhs, uint8 commanderLhs, uint8 commanderRhs) private view returns (FightResult memory) {
       require(selectionLhs.length == 4, 'Selection needs to have 4 elements');
       require(selectionRhs.length == 4, 'Selection needs to have 4 elements');
 
@@ -364,7 +364,7 @@ contract NewOmega {
     return ret;
   }
 
-  function registerDefence(uint16[] memory defence, uint16 commander, bytes32 name) public {
+  function registerDefence(uint8[] memory defence, uint8 commander, bytes32 name) public {
     PlayerDefence memory newDefence = PlayerDefence({
       player: msg.sender,
       defenceSelection: defence,
@@ -394,7 +394,7 @@ contract NewOmega {
     return playerDefenceMapping[msg.sender];
   }
 
-  function attack(address enemy, uint16[] memory selection, uint16 commander) public {
+  function attack(address enemy, uint8[] memory selection, uint8 commander) public {
     require(playerDefenceMapping[enemy].isInitialised, 'Can only attack a registered defence');
 
     uint seed = uint(keccak256(abi.encodePacked(block.difficulty, block.timestamp, msg.sender)));

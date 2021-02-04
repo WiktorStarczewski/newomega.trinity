@@ -17,24 +17,24 @@
       {
         "components": [
           {
-            "internalType": "uint16[]",
+            "internalType": "uint8[]",
             "name": "selectionLhs",
-            "type": "uint16[]"
+            "type": "uint8[]"
           },
           {
-            "internalType": "uint16[]",
+            "internalType": "uint8[]",
             "name": "selectionRhs",
-            "type": "uint16[]"
+            "type": "uint8[]"
           },
           {
-            "internalType": "uint16",
+            "internalType": "uint8",
             "name": "commanderLhs",
-            "type": "uint16"
+            "type": "uint8"
           },
           {
-            "internalType": "uint16",
+            "internalType": "uint8",
             "name": "commanderRhs",
-            "type": "uint16"
+            "type": "uint8"
           },
           {
             "components": [
@@ -201,14 +201,14 @@
         "type": "address"
       },
       {
-        "internalType": "uint16[]",
+        "internalType": "uint8[]",
         "name": "selection",
-        "type": "uint16[]"
+        "type": "uint8[]"
       },
       {
-        "internalType": "uint16",
+        "internalType": "uint8",
         "name": "commander",
-        "type": "uint16"
+        "type": "uint8"
       }
     ],
     "name": "attack",
@@ -233,14 +233,14 @@
             "type": "bool"
           },
           {
-            "internalType": "uint16[]",
+            "internalType": "uint8[]",
             "name": "defenceSelection",
-            "type": "uint16[]"
+            "type": "uint8[]"
           },
           {
-            "internalType": "uint16",
+            "internalType": "uint8",
             "name": "commander",
-            "type": "uint16"
+            "type": "uint8"
           },
           {
             "internalType": "bytes32",
@@ -308,14 +308,14 @@
             "type": "bool"
           },
           {
-            "internalType": "uint16[]",
+            "internalType": "uint8[]",
             "name": "defenceSelection",
-            "type": "uint16[]"
+            "type": "uint8[]"
           },
           {
-            "internalType": "uint16",
+            "internalType": "uint8",
             "name": "commander",
-            "type": "uint16"
+            "type": "uint8"
           },
           {
             "internalType": "bytes32",
@@ -409,14 +409,14 @@
   {
     "inputs": [
       {
-        "internalType": "uint16[]",
+        "internalType": "uint8[]",
         "name": "defence",
-        "type": "uint16[]"
+        "type": "uint8[]"
       },
       {
-        "internalType": "uint16",
+        "internalType": "uint8",
         "name": "commander",
-        "type": "uint16"
+        "type": "uint8"
       },
       {
         "internalType": "bytes32",
@@ -437,24 +437,24 @@
         "type": "uint256"
       },
       {
-        "internalType": "uint16[]",
+        "internalType": "uint8[]",
         "name": "selectionLhs",
-        "type": "uint16[]"
+        "type": "uint8[]"
       },
       {
-        "internalType": "uint16[]",
+        "internalType": "uint8[]",
         "name": "selectionRhs",
-        "type": "uint16[]"
+        "type": "uint8[]"
       },
       {
-        "internalType": "uint16",
+        "internalType": "uint8",
         "name": "commanderLhs",
-        "type": "uint16"
+        "type": "uint8"
       },
       {
-        "internalType": "uint16",
+        "internalType": "uint8",
         "name": "commanderRhs",
-        "type": "uint16"
+        "type": "uint8"
       }
     ],
     "name": "replay",
@@ -462,24 +462,24 @@
       {
         "components": [
           {
-            "internalType": "uint16[]",
+            "internalType": "uint8[]",
             "name": "selectionLhs",
-            "type": "uint16[]"
+            "type": "uint8[]"
           },
           {
-            "internalType": "uint16[]",
+            "internalType": "uint8[]",
             "name": "selectionRhs",
-            "type": "uint16[]"
+            "type": "uint8[]"
           },
           {
-            "internalType": "uint16",
+            "internalType": "uint8",
             "name": "commanderLhs",
-            "type": "uint16"
+            "type": "uint8"
           },
           {
-            "internalType": "uint16",
+            "internalType": "uint8",
             "name": "commanderRhs",
-            "type": "uint16"
+            "type": "uint8"
           },
           {
             "components": [
