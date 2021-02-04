@@ -36,8 +36,8 @@
       ]
     },
     "/Users/wiktor/projects/newomega-trinity/org.celrisen.newomega/hardhat/contracts/NewOmega.sol": {
-      "lastModificationDate": 1612470235708,
-      "contentHash": "ce80eb42dfc0ce0e3f99f6365b30c8bd",
+      "lastModificationDate": 1612472767529,
+      "contentHash": "0f7204a9f72b70ff8f6b020110f01376",
       "sourceName": "contracts/NewOmega.sol",
       "solcConfig": {
         "version": "0.8.0",

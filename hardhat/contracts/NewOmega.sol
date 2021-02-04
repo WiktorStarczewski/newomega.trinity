@@ -44,9 +44,7 @@ struct FightStateInternal {
   uint8 loggedLhsMoves;
   uint8 loggedRhsMoves;
   Move[] lhsMoves;
-  Move[] lhsOptimisedMoves;
   Move[] rhsMoves;
-  Move[] rhsOptimisedMoves;
   uint8 currentShip;
 }
 
@@ -276,16 +274,6 @@ library GameEngineLibrary {
       }
     }
 
-    if (logMoves) {
-      fightState.lhsOptimisedMoves = new Move[](fightState.round * MAX_SHIPS);
-      fightState.rhsOptimisedMoves = new Move[](fightState.round * MAX_SHIPS);
-
-      for (uint16 i = 0; i < fightState.round * MAX_SHIPS; i++) {
-        fightState.lhsOptimisedMoves[i] = fightState.lhsMoves[i];
-        fightState.rhsOptimisedMoves[i] = fightState.rhsMoves[i];
-      }
-    }
-
     delete shipPositionsRhs;
     delete shipPositionsLhs;
 
@@ -294,12 +282,12 @@ library GameEngineLibrary {
       selectionRhs: selectionRhs,
       commanderLhs: commanderLhs,
       commanderRhs: commanderRhs,
-      lhs: fightState.lhsOptimisedMoves,
-      rhs: fightState.rhsOptimisedMoves,
+      lhs: fightState.lhsMoves,
+      rhs: fightState.rhsMoves,
       lhsDead: isDead(shipHpsLhs),
       rhsDead: isDead(shipHpsRhs),
       rounds: fightState.round,
-      seed: 0
+      seed: seed
     });
   }
 }
@@ -423,7 +411,6 @@ contract NewOmega {
       playerDataMapping[enemy].losses++;
     }
 
-    result.seed = seed;
     emit FightComplete(msg.sender, enemy, result);
   }
 

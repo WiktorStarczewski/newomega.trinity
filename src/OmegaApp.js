@@ -190,23 +190,30 @@ export default class OmegaApp extends Component {
     }
 
     async showLogs() {
-        const filter = this.state.newOmegaContract.filters.FightComplete();
-        filter.fromBlock = this.state.provider.getBlockNumber().then((b) => b - 10000);
-        filter.toBlock = 'latest';
-        filter.attacker = this.state.ownAccount;
+        const filterAttacker = this.state.newOmegaContract.filters.FightComplete();
+        filterAttacker.fromBlock = this.state.provider.getBlockNumber().then((b) => b - 100000);
+        filterAttacker.toBlock = 'latest';
+        filterAttacker.attacker = this.state.ownAccount;
+
+        const filterDefender = this.state.newOmegaContract.filters.FightComplete();
+        filterAttacker.fromBlock = this.state.provider.getBlockNumber().then((b) => b - 100000);
+        filterAttacker.toBlock = 'latest';
+        filterAttacker.defender = this.state.ownAccount;
 
         this.setState({
             loading: true,
         });
 
-        let logs;
+        let logsAttacker, logsDefender;
 
         try {
-            logs = await this.state.provider.getLogs(filter);
+            logsAttacker = await this.state.provider.getLogs(filterAttacker);
+            logsDefender = await this.state.provider.getLogs(filterDefender);
         } catch (error) {
             return this.setState(this.defaultLoadedState);
         }
 
+        const logs = logsAttacker.concat(logsDefender);
         const logsParsed = _.map(logs, (log) => {
             return this.state.newOmegaContract.interface.parseLog(log);
         });
@@ -435,7 +442,7 @@ export default class OmegaApp extends Component {
 
     _loadContracts(provider, signer, ownAccount) {
         const newOmegaJson = require('./abi/NewOmega.json');
-        const newOmegaAddress = '0xB27C75147596E3C6425c4d3256cBd3f918bfcb43';
+        const newOmegaAddress = '0xd4BCEB5e9C0c887B6a15239aAB3734EC741c3571';
         const newOmegaContract = new ethers.Contract(newOmegaAddress, newOmegaJson, signer);
 
         this.attachBlockchainEvents(provider, newOmegaContract, ownAccount);
