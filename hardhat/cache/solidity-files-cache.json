@@ -1,113 +1,6 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "/Users/wiktor/projects/newomega-trinity/org.celrisen.newomega/hardhat/contracts/GameEngine.sol": {
-      "lastModificationDate": 1612349403157,
-      "contentHash": "ed643212c1ba0b901027286076e95f45",
-      "sourceName": "contracts/GameEngine.sol",
-      "solcConfig": {
-        "version": "0.8.0",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "hardhat/console.sol"
-      ],
-      "versionPragmas": [
-        ">=0.8.0 <0.9.0"
-      ],
-      "artifacts": [
-        "GameEngine",
-        "GameEngineLibrary"
-      ]
-    },
-    "/Users/wiktor/projects/newomega-trinity/org.celrisen.newomega/hardhat/contracts/GameManager.sol": {
-      "lastModificationDate": 1612370420720,
-      "contentHash": "f62d62123e919c8e6f0ca7653f761794",
-      "sourceName": "contracts/GameManager.sol",
-      "solcConfig": {
-        "version": "0.8.0",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "./GameEngine.sol"
-      ],
-      "versionPragmas": [
-        ">=0.6.8 <0.9.0"
-      ],
-      "artifacts": [
-        "GameManager"
-      ]
-    },
-    "/Users/wiktor/projects/newomega-trinity/org.celrisen.newomega/hardhat/contracts/Migrations.sol": {
-      "lastModificationDate": 1612215551401,
-      "contentHash": "50b3b1dc92806dc8f604fc8c5c65518f",
-      "sourceName": "contracts/Migrations.sol",
-      "solcConfig": {
-        "version": "0.8.0",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        ">=0.4.22 <0.9.0"
-      ],
-      "artifacts": [
-        "Migrations"
-      ]
-    },
     "/Users/wiktor/projects/newomega-trinity/org.celrisen.newomega/hardhat/node_modules/hardhat/console.sol": {
       "lastModificationDate": 1612215697770,
       "contentHash": "cc4777addd464ea56fa35b1c45df0591",
@@ -140,6 +33,41 @@
       ],
       "artifacts": [
         "console"
+      ]
+    },
+    "/Users/wiktor/projects/newomega-trinity/org.celrisen.newomega/hardhat/contracts/NewOmega.sol": {
+      "lastModificationDate": 1612457082377,
+      "contentHash": "114f15ea32e44e38ad5bc949e74d9a04",
+      "sourceName": "contracts/NewOmega.sol",
+      "solcConfig": {
+        "version": "0.8.0",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1337
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.8.0 <0.9.0"
+      ],
+      "artifacts": [
+        "GameEngineLibrary",
+        "NewOmega"
       ]
     }
   }

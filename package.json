@@ -2,7 +2,7 @@
   "name": "my-react-app",
   "version": "0.0.1",
   "private": true,
-  "homepage": "https://wiktorstarczewski.github.io/newomega.trinity",
+  "homepage": "https://playnewomega.online",
   "dependencies": {
     "@babel/core": "7.6.0",
     "@babylonjs/core": "^4.2.0",

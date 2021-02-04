@@ -49,8 +49,7 @@ export default class OmegaApp extends Component {
             web3Loaded: false,
             ethBalance: 0,
             blockNumber: 0,
-            gameEngineContract: null,
-            gameManagerContract: null,
+            newOmegaContract: null,
             hasUnseenFights: false,
             playerName: window.localStorage.getItem('OmegaPlayerName') || 'Anonymous',
         };
@@ -79,7 +78,7 @@ export default class OmegaApp extends Component {
             });
 
             try {
-                const tx = await this.state.gameManagerContract.registerDefence(
+                const tx = await this.state.newOmegaContract.registerDefence(
                     this.state.trainingSelfSelection,
                     commander,
                     ethers.utils.formatBytes32String(this.state.playerName)
@@ -96,11 +95,10 @@ export default class OmegaApp extends Component {
             });
 
             try {
-                const tx = await this.state.gameManagerContract.attack(
+                const tx = await this.state.newOmegaContract.attack(
                     this.state.trainingOpponent,
                     this.state.trainingSelfSelection,
-                    commander,
-                    ethers.utils.formatBytes32String(this.state.playerName)
+                    commander
                 );
 
                 await tx.wait();
@@ -173,8 +171,8 @@ export default class OmegaApp extends Component {
         });
     }
 
-    attachBlockchainEvents(provider, gameManagerContract, ownAccount) {
-        const filter = gameManagerContract.filters.FightComplete();
+    attachBlockchainEvents(provider, newOmegaContract, ownAccount) {
+        const filter = newOmegaContract.filters.FightComplete();
         filter.attacker = ownAccount;
 
         provider.on(filter, () => {
@@ -192,7 +190,7 @@ export default class OmegaApp extends Component {
     }
 
     async showLogs() {
-        const filter = this.state.gameManagerContract.filters.FightComplete();
+        const filter = this.state.newOmegaContract.filters.FightComplete();
         filter.fromBlock = this.state.provider.getBlockNumber().then((b) => b - 10000);
         filter.toBlock = 'latest';
         filter.attacker = this.state.ownAccount;
@@ -203,28 +201,22 @@ export default class OmegaApp extends Component {
 
         const logs = await this.state.provider.getLogs(filter);
         const logsParsed = _.map(logs, (log) => {
-            return this.state.gameManagerContract.interface.parseLog(log);
+            return this.state.newOmegaContract.interface.parseLog(log);
         });
+
+        const defenders = await this.state.newOmegaContract.getAllDefenders();
 
         this.setState({
             mode: Modes.ShowLogs,
             logs: logsParsed,
             loading: false,
             hasUnseenFights: false,
+            defenders,
         });
     }
 
     logSelectionDone(log) {
         const result = log.args[2];
-
-        const _parseMoves = (moves) => {
-            return _.map(moves, (move) => {
-                return {
-                    ...move,
-                    damage: move.damage.toNumber(),
-                };
-            });
-        };
 
         const _parseHp = (hp) => {
             return _.map(hp, (hpInst) => {
@@ -233,8 +225,8 @@ export default class OmegaApp extends Component {
         }
 
         const resultJson = {
-            lhs: _parseMoves(result.lhs),
-            rhs: _parseMoves(result.rhs),
+            lhs: result.lhs,
+            rhs: result.rhs,
             lhsHp: _parseHp(result.lhsHp),
             rhsHp: _parseHp(result.rhsHp),
             rounds: result.rounds,
@@ -260,7 +252,7 @@ export default class OmegaApp extends Component {
             loading: true,
         });
 
-        const defenders = await this.state.gameManagerContract.getAllDefenders();
+        const defenders = await this.state.newOmegaContract.getAllDefenders();
 
         this.setState({
             mode: Modes.OpponentSelection,
@@ -274,7 +266,7 @@ export default class OmegaApp extends Component {
             loading: true,
         });
 
-        const leaderboard = await this.state.gameManagerContract.getLeaderboard();
+        const leaderboard = await this.state.newOmegaContract.getLeaderboard();
 
         this.setState({
             mode: Modes.Leaderboard,
@@ -348,7 +340,8 @@ export default class OmegaApp extends Component {
                     />
                 }
                 {this.state.mode === Modes.ShowLogs &&
-                    <ShowLogs logs={this.state.logs} onDone={this.logSelectionDone.bind(this)}/>
+                    <ShowLogs logs={this.state.logs}
+                        opponents={this.state.defenders} onDone={this.logSelectionDone.bind(this)}/>
                 }
                 {this.state.mode === Modes.Leaderboard &&
                     <Leaderboard leaderboard={this.state.leaderboard}/>
@@ -398,18 +391,13 @@ export default class OmegaApp extends Component {
     }
 
     _loadContracts(provider, signer, ownAccount) {
-        const gameEngineJson = require('./abi/GameEngine.json');
-        const gameEngineContractAddress = '0x413bE6F319B9eDa31df02Fb653314E03E1dCF401';
-        const gameEngineContract = new ethers.Contract(gameEngineContractAddress, gameEngineJson, signer);
+        const newOmegaJson = require('./abi/NewOmega.json');
+        const newOmegaAddress = '0xd77993D10b39Ff177b4881FBbd3615320385c3FE';
+        const newOmegaContract = new ethers.Contract(newOmegaAddress, newOmegaJson, signer);
 
-        const gameManagerJson = require('./abi/GameManager.json');
-        const gameManagerContractAddress = '0xC91da4a591d08be306D6ae35EF5d114D400bA529';
-        const gameManagerContract = new ethers.Contract(gameManagerContractAddress, gameManagerJson, signer);
-
-        this.attachBlockchainEvents(provider, gameManagerContract, ownAccount);
+        this.attachBlockchainEvents(provider, newOmegaContract, ownAccount);
         this.setState({
-            gameEngineContract,
-            gameManagerContract,
+            newOmegaContract,
             web3Loaded: true,
         });
     }
