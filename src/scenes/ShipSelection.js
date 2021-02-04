@@ -152,7 +152,7 @@ export const ShipSelection = (props) => {
         }
     };
 
-    const shipAdderClassName = `addOrRemoveShip addShip ${notEnoughShips ? 'highlightOverModal' : ''}`;
+    const shipAdderClassName = `addOrRemoveShip addShip highlightOverModal`;
 
     return (
         <div className="ShipSelection">

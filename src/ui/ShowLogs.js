@@ -4,24 +4,31 @@ import _ from 'underscore';
 import { ethers } from 'ethers';
 
 
-// props.opponents, props.onDone
+// props.opponents, logs, props.onDone
 export const ShowLogs = (props) => {
     const selectLog = (log) => {
         props.onDone(log);
     };
 
-    const renderLog = (log, ind) => {
-        debugger;
+    const addressToName = (address) => {
+        const opponent = _.findWhere(props.opponents, {
+            player: address,
+        });
+        return opponent
+            ? ethers.utils.parseBytes32String(opponent.name)
+            : 'Anonymous';
+    }
 
+    const renderLog = (log, ind) => {
         return (
             <div
                 key={ind}
                 className="mainMenuItem"
                 onClick={() => { selectLog(log) }}
             >
-                <span className="address">{ethers.utils.parseBytes32String(log.args[2].nameLhs)}</span>
+                <span className="address">{addressToName(log.args[0])}</span>
                 <span className="vs"> VS </span>
-                <span className="address">{ethers.utils.parseBytes32String(log.args[2].nameRhs)}</span>
+                <span className="address">{addressToName(log.args[1])}</span>
             </div>
         );
     };

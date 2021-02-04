@@ -1,0 +1,587 @@
+[
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "attacker",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "defender",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint16[]",
+            "name": "selectionLhs",
+            "type": "uint16[]"
+          },
+          {
+            "internalType": "uint16[]",
+            "name": "selectionRhs",
+            "type": "uint16[]"
+          },
+          {
+            "internalType": "uint16",
+            "name": "commanderLhs",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "commanderRhs",
+            "type": "uint16"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint8",
+                "name": "moveType",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint8",
+                "name": "round",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint8",
+                "name": "source",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint8",
+                "name": "target",
+                "type": "uint8"
+              },
+              {
+                "internalType": "int8",
+                "name": "targetPosition",
+                "type": "int8"
+              },
+              {
+                "internalType": "uint32",
+                "name": "damage",
+                "type": "uint32"
+              }
+            ],
+            "internalType": "struct Move[]",
+            "name": "lhs",
+            "type": "tuple[]"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint8",
+                "name": "moveType",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint8",
+                "name": "round",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint8",
+                "name": "source",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint8",
+                "name": "target",
+                "type": "uint8"
+              },
+              {
+                "internalType": "int8",
+                "name": "targetPosition",
+                "type": "int8"
+              },
+              {
+                "internalType": "uint32",
+                "name": "damage",
+                "type": "uint32"
+              }
+            ],
+            "internalType": "struct Move[]",
+            "name": "rhs",
+            "type": "tuple[]"
+          },
+          {
+            "internalType": "bool",
+            "name": "lhsDead",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "rhsDead",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint8",
+            "name": "rounds",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint256",
+            "name": "seed",
+            "type": "uint256"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct FightResult",
+        "name": "result",
+        "type": "tuple"
+      }
+    ],
+    "name": "FightComplete",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint16",
+        "name": "index",
+        "type": "uint16"
+      },
+      {
+        "internalType": "uint16",
+        "name": "cp",
+        "type": "uint16"
+      },
+      {
+        "internalType": "uint16",
+        "name": "hp",
+        "type": "uint16"
+      },
+      {
+        "internalType": "uint16",
+        "name": "attackBase",
+        "type": "uint16"
+      },
+      {
+        "internalType": "uint16",
+        "name": "attackVariable",
+        "type": "uint16"
+      },
+      {
+        "internalType": "uint16",
+        "name": "defence",
+        "type": "uint16"
+      },
+      {
+        "internalType": "uint16",
+        "name": "speed",
+        "type": "uint16"
+      },
+      {
+        "internalType": "uint16",
+        "name": "range",
+        "type": "uint16"
+      },
+      {
+        "internalType": "uint16",
+        "name": "agility",
+        "type": "uint16"
+      }
+    ],
+    "name": "addShip",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "enemy",
+        "type": "address"
+      },
+      {
+        "internalType": "uint16[]",
+        "name": "selection",
+        "type": "uint16[]"
+      },
+      {
+        "internalType": "uint16",
+        "name": "commander",
+        "type": "uint16"
+      }
+    ],
+    "name": "attack",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getAllDefenders",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "player",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "isInitialised",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint16[]",
+            "name": "defenceSelection",
+            "type": "uint16[]"
+          },
+          {
+            "internalType": "uint16",
+            "name": "commander",
+            "type": "uint16"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "name",
+            "type": "bytes32"
+          }
+        ],
+        "internalType": "struct PlayerDefence[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getLeaderboard",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "player",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "name",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "wins",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "losses",
+            "type": "uint32"
+          }
+        ],
+        "internalType": "struct LeaderboardEntry[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getOwnDefence",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "player",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "isInitialised",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint16[]",
+            "name": "defenceSelection",
+            "type": "uint16[]"
+          },
+          {
+            "internalType": "uint16",
+            "name": "commander",
+            "type": "uint16"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "name",
+            "type": "bytes32"
+          }
+        ],
+        "internalType": "struct PlayerDefence",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getShips",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint16",
+            "name": "cp",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "hp",
+            "type": "uint16"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint16",
+                "name": "base",
+                "type": "uint16"
+              },
+              {
+                "internalType": "uint16",
+                "name": "variable",
+                "type": "uint16"
+              }
+            ],
+            "internalType": "struct ShipVariableStat",
+            "name": "attack",
+            "type": "tuple"
+          },
+          {
+            "internalType": "uint16",
+            "name": "defence",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "speed",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "range",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "agility",
+            "type": "uint16"
+          }
+        ],
+        "internalType": "struct Ship[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint16[]",
+        "name": "defence",
+        "type": "uint16[]"
+      },
+      {
+        "internalType": "uint16",
+        "name": "commander",
+        "type": "uint16"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "name",
+        "type": "bytes32"
+      }
+    ],
+    "name": "registerDefence",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "seed",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint16[]",
+        "name": "selectionLhs",
+        "type": "uint16[]"
+      },
+      {
+        "internalType": "uint16[]",
+        "name": "selectionRhs",
+        "type": "uint16[]"
+      },
+      {
+        "internalType": "uint16",
+        "name": "commanderLhs",
+        "type": "uint16"
+      },
+      {
+        "internalType": "uint16",
+        "name": "commanderRhs",
+        "type": "uint16"
+      }
+    ],
+    "name": "replay",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint16[]",
+            "name": "selectionLhs",
+            "type": "uint16[]"
+          },
+          {
+            "internalType": "uint16[]",
+            "name": "selectionRhs",
+            "type": "uint16[]"
+          },
+          {
+            "internalType": "uint16",
+            "name": "commanderLhs",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "commanderRhs",
+            "type": "uint16"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint8",
+                "name": "moveType",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint8",
+                "name": "round",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint8",
+                "name": "source",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint8",
+                "name": "target",
+                "type": "uint8"
+              },
+              {
+                "internalType": "int8",
+                "name": "targetPosition",
+                "type": "int8"
+              },
+              {
+                "internalType": "uint32",
+                "name": "damage",
+                "type": "uint32"
+              }
+            ],
+            "internalType": "struct Move[]",
+            "name": "lhs",
+            "type": "tuple[]"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint8",
+                "name": "moveType",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint8",
+                "name": "round",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint8",
+                "name": "source",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint8",
+                "name": "target",
+                "type": "uint8"
+              },
+              {
+                "internalType": "int8",
+                "name": "targetPosition",
+                "type": "int8"
+              },
+              {
+                "internalType": "uint32",
+                "name": "damage",
+                "type": "uint32"
+              }
+            ],
+            "internalType": "struct Move[]",
+            "name": "rhs",
+            "type": "tuple[]"
+          },
+          {
+            "internalType": "bool",
+            "name": "lhsDead",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "rhsDead",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint8",
+            "name": "rounds",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint256",
+            "name": "seed",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct FightResult",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]
