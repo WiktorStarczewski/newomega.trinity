@@ -7,25 +7,31 @@ import { CommanderSelection } from './scenes/CommanderSelection';
 import { Combat } from './scenes/Combat';
 import { OpponentSelection } from './ui/OpponentSelection';
 import { Leaderboard } from './ui/Leaderboard';
+import { LoginScreen } from './ui/LoginScreen';
 import { ShowLogs } from './ui/ShowLogs';
+import { Settings } from './ui/Settings';
 import { Ships } from './definitions/Ships';
 import { FastProvider } from './common/FastProvider';
+import SettingsIcon from '@material-ui/icons/Settings';
 import _ from 'underscore';
 
 
 
 const Modes = {
-    MainScreen: 0,
-    ShipSelection: 1,
-    CommanderSelection: 2,
-    CommanderPreview: 3,
-    Combat: 4,
-    OpponentSelection: 5,
-    ShowLogs: 6,
-    Leaderboard: 7,
+    LoginScreen: 0,
+    MainScreen: 1,
+    ShipSelection: 2,
+    CommanderSelection: 3,
+    CommanderPreview: 4,
+    Combat: 5,
+    OpponentSelection: 6,
+    ShowLogs: 7,
+    Leaderboard: 8,
+    Settings: 9,
 };
 
 const TRAINING_SELECTION = [25, 18, 16, 6];
+const DEFAULT_PROVIDER = 'ropsten';
 
 export default class OmegaApp extends Component {
     constructor(props) {
@@ -47,8 +53,8 @@ export default class OmegaApp extends Component {
         };
 
         this.defaultUnloadedState = {
+            mode: Modes.LoginScreen,
             ownAccount: null,
-            web3Loaded: false,
             ethBalance: 0,
             blockNumber: 0,
             newOmegaContract: null,
@@ -349,12 +355,33 @@ export default class OmegaApp extends Component {
         });
     }
 
+    onLoginDone(options) {
+        this.setState({
+            loading: true,
+        }, () => {
+            _.defer(() => {
+                const provider = ethers.getDefaultProvider(DEFAULT_PROVIDER);
+                const signer = options.finisher().connect(provider);
+                this._initWeb3(provider, signer);
+            });
+        });
+    }
+
+    showSettings() {
+        this.setState({
+            mode: Modes.Settings,
+        });
+    }
+
     render() {
         const logsClassName = `mainMenuItem ${this.state.hasUnseenFights ? 'unread' : ''}`;
         const ethBalanceString = this._formatBalance(ethers.utils.formatEther(this.state.ethBalance));
 
         return (
             <div className="App">
+                {this.state.mode === Modes.LoginScreen &&
+                    <LoginScreen onDone={this.onLoginDone.bind(this)}/>
+                }
                 {this.state.mode === Modes.MainScreen &&
                     <div className="mainScreen ui">
                         <div className="mainTitle">
@@ -362,6 +389,9 @@ export default class OmegaApp extends Component {
                         <div className="playerName">
                             <input autoCorrect="off" type="text" className="playerNameInput" value={this.state.playerName}
                                 onChange={this.handlePlayerNameChange.bind(this)}/>
+                        </div>
+                        <div className="settings" onClick={this.showSettings.bind(this)}>
+                            <SettingsIcon fontSize="large"/>
                         </div>
                         <div className="mainMenu">
                             <div className="mainMenuItem" onClick={this.training.bind(this)}>
@@ -390,6 +420,11 @@ export default class OmegaApp extends Component {
                             Ξ{ethBalanceString} Block: {this.state.blockNumber}
                         </div>
                     </div>
+                }
+                {this.state.mode === Modes.Settings &&
+                    <Settings onDone={() => { this.setState(this.defaultLoadedState) }}
+                        address={this.state.ownAccount} balance={ethBalanceString}
+                        mnemonic={this.state.signer && this.state.signer.mnemonic.phrase}/>
                 }
                 {this.state.mode === Modes.ShipSelection &&
                     <ShipSelection maxCp={this.state.trainingCp}
@@ -424,7 +459,7 @@ export default class OmegaApp extends Component {
                 }
                 <div
                     id="omegaLoadingScreen"
-                    style={this.state.web3Loaded && !this.state.loading ? {display: 'none'} : {}}>
+                    style={!this.state.loading ? {display: 'none'} : {}}>
                     <div className="logo"/>
                     <div className="progressOuter progress-line"/>
                     <div className="status">
@@ -441,21 +476,29 @@ export default class OmegaApp extends Component {
     }
 
     componentDidMount() {
-        this._initWeb3();
+//        this._initWeb3();
     }
 
     _formatBalance(balance) {
         return parseFloat(balance, 10).toFixed(4).toString();
     }
 
-    async _initWeb3() {
+    async _initWeb3(provider, signer) {
         // const provider = new TrinitySDK.Ethereum.Web3.Providers.TrinityWeb3Provider();
-        const provider = new FastProvider(window.ethereum);
-        const signer = provider.getSigner();
+        provider = provider || new FastProvider(window.ethereum);
+        signer = signer || provider.getSigner();
 
-        // const provider = new Web3(window.ethereum);
-        const accounts = await window.ethereum.send('eth_requestAccounts');
-        const ownAccount = accounts.result[0];
+        this.setState({
+            loading: true,
+        });
+
+        let ownAccount;
+        if (!provider) {
+            const accounts = await window.ethereum.send('eth_requestAccounts');
+            ownAccount = accounts.result[0];
+        } else {
+            ownAccount = signer.address;
+        }
 
         await this._checkBalance(provider, ownAccount);
         this.setState({
@@ -482,7 +525,8 @@ export default class OmegaApp extends Component {
         this.attachBlockchainEvents(provider, newOmegaContract, ownAccount);
         this.setState({
             newOmegaContract,
-            web3Loaded: true,
+            mode: Modes.MainScreen,
+            loading: false,
         });
     }
 }

@@ -1,0 +1,21 @@
+.Settings {
+    height: 100%;
+    background: url("../images/stars5.jpg") no-repeat center center;
+    background-size: cover;
+}
+
+.Settings .mainMenu {
+    color: white;
+}
+
+.Settings .qr {
+    position: fixed;
+    bottom: 0.5rem;
+    left: calc(50% - 32px);
+    width: 64px;
+    height: 64px;
+}
+
+.Settings .mnemonic {
+    margin-top: 1rem;
+}
