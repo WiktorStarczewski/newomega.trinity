@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import _ from 'underscore';
-import { Engine, Scene } from 'react-babylonjs';
-import { Vector3, AssetsManager, Layer, ArcRotateCamera, HemisphericLight } from '@babylonjs/core';
+import { Engine, Scene, Vector3, AssetsManager, Layer, ArcRotateCamera, HemisphericLight } from '@babylonjs/core';
 import '@babylonjs/loaders';
 import { Ships } from '../definitions/Ships';
 import { OmegaLoadingScreen } from '../common/OmegaLoadingScreen';
@@ -26,6 +25,7 @@ export const ShipSelection = (props) => {
     const [ loadedMeshes, setLoadedMeshes ] = useState([]);
     const [ resourcesLoaded, setResourcesLoaded ] = useState(false);
     const [ notEnoughShips, setNotEnoughShips ] = useState(false);
+    const reactCanvas = useRef(null);
 
     const nextShip = () => {
         const newShip = currentShip + 1;
@@ -67,7 +67,7 @@ export const ShipSelection = (props) => {
 
     const afterLoadShip = (scene, newMeshes, shipIndex) => {
         newMeshes[0].position = Vector3.Zero();
-        newMeshes[0].rotation = new Vector3(-Math.PI / 12, Math.PI, 0);
+        newMeshes[0].rotation = new Vector3(-Math.PI / 12, Math.PI * (Ships[shipIndex].rotationModifierY || 1), 0);
         newMeshes[0].scalingDeterminant = 0.001 * Ships[shipIndex].scale;
         newMeshes[0].isVisible = false;
     };
@@ -108,8 +108,7 @@ export const ShipSelection = (props) => {
         });
     };
 
-    const onSceneMount = (e) => {
-        const { canvas, scene } = e;
+    const onSceneMount = (canvas, scene) => {
         setScene(scene);
 
         scene.getEngine().loadingScreen = new OmegaLoadingScreen();
@@ -140,11 +139,13 @@ export const ShipSelection = (props) => {
             const deltaTimeInMillis = scene.getEngine().getDeltaTime();
 
             _.each(scene.meshes, (mesh) => {
-                const rpm = 2;
-                mesh.rotation.y +=
-                    ((rpm / 60) * Math.PI * 2 * (deltaTimeInMillis / 1000));
-                mesh.rotation.z +=
-                    ((rpm / 60) * Math.PI * 2 * (deltaTimeInMillis / 1000));
+                if (mesh.isVisible) {
+                    const rpm = 2;
+                    mesh.rotation.y +=
+                        ((rpm / 60) * Math.PI * 2 * (deltaTimeInMillis / 1000));
+                    mesh.rotation.z +=
+                        ((rpm / 60) * Math.PI * 2 * (deltaTimeInMillis / 1000));
+                }
             });
         });
     };
@@ -157,11 +158,42 @@ export const ShipSelection = (props) => {
         }
     };
 
+    useEffect(() => {
+        if (reactCanvas.current) {
+            const engine = new Engine(reactCanvas.current, true, null, true);
+            const scene = new Scene(engine);
+
+            if (scene.isReady()) {
+                onSceneMount(reactCanvas.current, scene);
+            } else {
+                scene.onReadyObservable.addOnce(scene => onSceneMount(reactCanvas.current, scene));
+            }
+
+            engine.runRenderLoop(() => {
+                scene.render();
+            })
+
+            const resize = () => {
+                scene.getEngine().resize();
+            }
+
+            if (window) {
+                window.addEventListener('resize', resize);
+            }
+
+            return () => {
+                scene.getEngine().dispose();
+                if (window) {
+                    window.removeEventListener('resize', resize);
+                }
+            }
+        }
+    }, [reactCanvas]);
+
+
     return (
         <div className="ShipSelection">
-            <Engine antialias={true} adaptToDeviceRatio={true} canvasId="ship-selection">
-                <Scene onSceneMount={onSceneMount}/>
-            </Engine>
+            <canvas ref={reactCanvas} id="ship-selection"/>
             {resourcesLoaded &&
                 <div className="ui">
                     <div className="uiElement shipName">

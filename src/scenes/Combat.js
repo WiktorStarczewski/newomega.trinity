@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import _ from 'underscore';
-import { Engine, Scene } from 'react-babylonjs';
-import { Vector3, Color3, Mesh, AssetsManager, StandardMaterial, ParticleHelper, Layer,
+import { Engine, Scene, Vector3, Color3, Mesh, AssetsManager, StandardMaterial, ParticleHelper, Layer,
     Animation, ArcRotateCamera, HemisphericLight } from '@babylonjs/core';
 import '@babylonjs/loaders';
 import { Ships } from '../definitions/Ships';
@@ -18,6 +17,7 @@ export const Combat = (props) => {
     const [ showingResult, setShowingResult ] = useState(false);
     const [ combatLog, setCombatLog ] = useState('');
     const [ resourcesLoaded, setResourcesLoaded ] = useState(false);
+    const reactCanvas = useRef(null);
     let shipMeshesLhs = [];
     let shipMeshesRhs = [];
 
@@ -281,9 +281,7 @@ export const Combat = (props) => {
         playRound(scene, 0, shipHpsLhs, shipHpsRhs);
     };
 
-    const onSceneMount = (e) => {
-        const { canvas, scene } = e;
-
+    const onSceneMount = (canvas, scene) => {
         scene.getEngine().loadingScreen = new OmegaLoadingScreen();
 
         const camera = new ArcRotateCamera('camera1',
@@ -319,14 +317,44 @@ export const Combat = (props) => {
         }
     }
 
-    const commanderAssetLhs = Commanders[props.commanderLhs].asset + 'thumb.png';
-    const commanderAssetRhs = Commanders[props.commanderRhs].asset + 'thumb.png';
+    const commanderAssetLhs = Commanders[props.commanderLhs % Commanders.length].asset + 'thumb.png';
+    const commanderAssetRhs = Commanders[props.commanderRhs % Commanders.length].asset + 'thumb.png';
+
+    useEffect(() => {
+        if (reactCanvas.current) {
+            const engine = new Engine(reactCanvas.current, true, null, true);
+            const scene = new Scene(engine);
+
+            if (scene.isReady()) {
+                onSceneMount(reactCanvas.current, scene);
+            } else {
+                scene.onReadyObservable.addOnce(scene => onSceneMount(reactCanvas.current, scene));
+            }
+
+            engine.runRenderLoop(() => {
+                scene.render();
+            })
+
+            const resize = () => {
+                scene.getEngine().resize();
+            }
+
+            if (window) {
+                window.addEventListener('resize', resize);
+            }
+
+            return () => {
+                scene.getEngine().dispose();
+                if (window) {
+                    window.removeEventListener('resize', resize);
+                }
+            }
+        }
+    }, [reactCanvas]);
 
     return (
         <div className="Combat">
-            <Engine antialias={true} adaptToDeviceRatio={true} canvasId="combat">
-                <Scene onSceneMount={onSceneMount}/>
-            </Engine>
+            <canvas ref={reactCanvas} id="combat"/>
             {resourcesLoaded &&
                 <div className="ui">
                     <div className="uiElement commander lhs">

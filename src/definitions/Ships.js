@@ -2,9 +2,9 @@ import { Color3, Vector3 } from '@babylonjs/core';
 
 export const Ships = [
     {
-        name: 'Frigate',
-        asset: 'assets/enif_cruiser/',
-        description: 'Cheap, quick and agile, the frigate can be used as a quick strike weapon, able to reach enemy lines quickest. Can not withstand much heat though.',
+        name: 'Hunter',
+        asset: 'assets/drone_v9_cybertech/',
+        description: 'Cheap, quick and agile, the Hunter can be used as a quick strike weapon, able to reach enemy lines quickest. Can not withstand much heat though.',
         stats: {
             cp: 1,
             hp: 1000,
@@ -17,7 +17,7 @@ export const Ships = [
             range: 6,
             agility: 25,
         },
-        scale: 8,
+        scale: 1000,
         combatScale: 0.6,
         visuals: {
             beamColor: new Color3(0, 1, 0),
@@ -25,9 +25,9 @@ export const Ships = [
         },
     },
     {
-        name: 'Light Cruiser',
+        name: 'Scorpio',
         asset: 'assets/drone_v2/',
-        description: 'As lightest of the heavier ships, the cruiser retains some of the speed and maneuverability of the frigate while offering big improvements in the hull and weaponry.',
+        description: 'As lightest of the heavier ships, the Scorpio retains some of the speed and maneuverability of the frigate while offering big improvements in the hull and weaponry.',
         stats: {
             cp: 4,
             hp: 4000,
@@ -49,9 +49,9 @@ export const Ships = [
         },
     },
     {
-        name: 'Destroyer',
+        name: 'Zeneca',
         asset: 'assets/zeneca_brute/',
-        description: 'The destroyer is an effective killing machine, providing both effective support and serving as an artillery line raining heavy damage on enemy ships.',
+        description: 'The Zeneca is an effective killing machine, providing both active support and serving as an artillery line raining heavy damage on enemy ships.',
         stats: {
             cp: 5,
             hp: 5000,
@@ -74,9 +74,9 @@ export const Ships = [
         },
     },
     {
-        name: 'Battleship',
-        asset: 'assets/battleship/',
-        description: 'Fitted with state of the art weaponry and protection, the battleship is the ultimate fighting force in the galaxy.',
+        name: 'Luminaris',
+        asset: 'assets/luminaris_starship/',
+        description: 'Fitted with state of the art weaponry and protection, the Luminaris is the ultimate fighting force in the galaxy.',
         stats: {
             cp: 15,
             hp: 10000,
@@ -89,7 +89,7 @@ export const Ships = [
             range: 12,
             agility: 0,
         },
-        scale: 16,
+        scale: 120,
         combatScale: 0.8,
         visuals: {
             beamColor: new Color3(1, 0, 1),

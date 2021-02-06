@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import _ from 'underscore';
-import { Engine, Scene } from 'react-babylonjs';
-import { Vector3, AssetsManager, Layer, ArcRotateCamera, HemisphericLight } from '@babylonjs/core';
+import { Engine, Scene, Vector3, AssetsManager, Layer, ArcRotateCamera, HemisphericLight } from '@babylonjs/core';
 import '@babylonjs/loaders';
 import { Commanders, CommanderRaritiesColors, commanderRarityToString } from '../definitions/Commanders';
 import { Ships } from '../definitions/Ships';
@@ -16,6 +15,7 @@ export const CommanderSelection = (props) => {
     const [ scene, setScene ] = useState(null);
     const [ loadedMeshes, setLoadedMeshes ] = useState([]);
     const [ resourcesLoaded, setResourcesLoaded ] = useState(false);
+    const reactCanvas = useRef(null);
 
     const nextCommander = () => {
         const newCommander = currentCommander + 1;
@@ -84,8 +84,7 @@ export const CommanderSelection = (props) => {
         }), 'play', true);
     };
 
-    const onSceneMount = (e) => {
-        const { canvas, scene } = e;
+    const onSceneMount = (canvas, scene) => {
         setScene(scene);
 
         scene.getEngine().loadingScreen = new OmegaLoadingScreen();
@@ -130,12 +129,41 @@ export const CommanderSelection = (props) => {
         : '';
     const commanderDefenceString = `+${Commanders[currentCommander].stats.defence.modifier}${commanderDefenceSuffix}`;
 
+    useEffect(() => {
+        if (reactCanvas.current) {
+            const engine = new Engine(reactCanvas.current, true, null, true);
+            const scene = new Scene(engine);
+
+            if (scene.isReady()) {
+                onSceneMount(reactCanvas.current, scene);
+            } else {
+                scene.onReadyObservable.addOnce(scene => onSceneMount(reactCanvas.current, scene));
+            }
+
+            engine.runRenderLoop(() => {
+                scene.render();
+            })
+
+            const resize = () => {
+                scene.getEngine().resize();
+            }
+
+            if (window) {
+                window.addEventListener('resize', resize);
+            }
+
+            return () => {
+                scene.getEngine().dispose();
+                if (window) {
+                    window.removeEventListener('resize', resize);
+                }
+            }
+        }
+    }, [reactCanvas]);
 
     return (
         <div className="CommanderSelection">
-            <Engine antialias={true} adaptToDeviceRatio={true} canvasId="ship-selection">
-                <Scene onSceneMount={onSceneMount}/>
-            </Engine>
+            <canvas ref={reactCanvas} id="commander-selection"/>
             {resourcesLoaded &&
                 <div className="ui">
                     <div className="uiElement commanderName" style={{color: commanderRarityColor}}>

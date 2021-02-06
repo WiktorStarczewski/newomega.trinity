@@ -2,39 +2,72 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2df76b15-e948-4208-a72c-b2ba43a56989" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/newomega-native-out.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../public/assets/videos/intro.mp4" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../public/assets/drone_v9_cybertech/scene.bin" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../public/assets/drone_v9_cybertech/scene.gltf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../public/assets/drone_v9_cybertech/textures/Scene_-_Root_diffuse.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../public/assets/drone_v9_cybertech/textures/Scene_-_Root_emissive.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../public/assets/drone_v9_cybertech/textures/Scene_-_Root_normal.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../public/assets/drone_v9_cybertech/textures/Scene_-_Root_specularGlossiness.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../public/assets/luminaris_starship/scene.bin" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../public/assets/luminaris_starship/scene.gltf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../public/assets/luminaris_starship/textures/Luminaris_starship_material_baseColor.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../public/assets/luminaris_starship/textures/Luminaris_starship_material_emissive.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../public/assets/luminaris_starship/textures/Luminaris_starship_material_metallicRoughness.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../public/assets/luminaris_starship/textures/Luminaris_starship_material_normal.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../.eslintcache" beforeDir="false" afterPath="$PROJECT_DIR$/../.eslintcache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../public/assets/worker_12/scene.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../public/assets/worker_12/scene.gltf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../public/assets/worker_12/textures/Material_2_diffuse.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../public/assets/worker_12/textures/Material_2_emissive.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../public/assets/worker_12/textures/Material_2_normal.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../public/assets/worker_12/textures/Material_2_specularGlossiness.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../public/assets/worker_12/textures/Material_3_diffuse.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../public/assets/worker_12/textures/Material_3_emissive.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../public/assets/worker_12/thumb.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/../src/App.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../src/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/OmegaApp.js" beforeDir="false" afterPath="$PROJECT_DIR$/../src/OmegaApp.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/common/FastProvider.js" beforeDir="false" afterPath="$PROJECT_DIR$/../src/common/FastProvider.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/definitions/Commanders.js" beforeDir="false" afterPath="$PROJECT_DIR$/../src/definitions/Commanders.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/nasa.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/../src/nasa.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/battleship/scene.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/battleship/scene.gltf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/battleship/textures/ScifiBattleshipDauntlessGrey_baseColor.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/battleship/textures/ScifiBattleshipDauntlessGrey_emissive.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/battleship/textures/ScifiBattleshipDauntlessGrey_metallicRoughness.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/battleship/textures/ScifiBattleshipDauntlessGrey_normal.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/battleship/textures/ScifiSpaceshipStandardWeapons_baseColor.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/battleship/textures/ScifiSpaceshipStandardWeapons_emissive.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/battleship/textures/ScifiSpaceshipStandardWeapons_metallicRoughness.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/battleship/textures/ScifiSpaceshipStandardWeapons_normal.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/enif_cruiser/scene.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/enif_cruiser/scene.gltf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/enif_cruiser/textures/02_-_Default_baseColor.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/enif_cruiser/textures/02_-_Default_emissive.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/enif_cruiser/textures/02_-_Default_metallicRoughness.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/enif_cruiser/textures/02_-_Default_normal.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/er-40/scene.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/er-40/scene.gltf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/er-40/textures/Drone_baseColor.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/er-40/textures/Drone_emissive.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/er-40/textures/Drone_metallicRoughness.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/er-40/textures/Drone_normal.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/er-40/textures/Glass_baseColor.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/er-40/textures/Glass_emissive.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/er-40/textures/Glass_metallicRoughness.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/er-40/textures/Glass_normal.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/er-40/textures/Leds_baseColor.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/er-40/textures/Leds_emissive.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/er-40/textures/Leds_metallicRoughness.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/er-40/textures/Leds_normal.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/er-40/textures/Light_baseColor.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/er-40/textures/Light_emissive.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/er-40/textures/Light_metallicRoughness.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/er-40/textures/Light_normal.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/er-40/textures/Ring1_baseColor.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/er-40/textures/Ring1_emissive.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/er-40/textures/Ring1_metallicRoughness.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/er-40/textures/Ring1_normal.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/er-40/textures/Ring2_baseColor.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/er-40/textures/Ring2_emissive.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/er-40/textures/Ring2_metallicRoughness.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/er-40/textures/Ring2_normal.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/pyramid/license.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/pyramid/scene.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/pyramid/scene.gltf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/pyramid/textures/baked_01_baseColor.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/pyramid/textures/baked_01_emissive.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/pyramid/textures/baked_01_metallicRoughness.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../public/assets/pyramid/textures/baked_01_normal.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/definitions/Ships.js" beforeDir="false" afterPath="$PROJECT_DIR$/../src/definitions/Ships.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../src/scenes/Combat.js" beforeDir="false" afterPath="$PROJECT_DIR$/../src/scenes/Combat.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/scenes/CommanderSelection.js" beforeDir="false" afterPath="$PROJECT_DIR$/../src/scenes/CommanderSelection.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../src/scenes/ShipSelection.js" beforeDir="false" afterPath="$PROJECT_DIR$/../src/scenes/ShipSelection.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/ui/Leaderboard.js" beforeDir="false" afterPath="$PROJECT_DIR$/../src/ui/Leaderboard.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/ui/LoginScreen.css" beforeDir="false" afterPath="$PROJECT_DIR$/../src/ui/LoginScreen.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/ui/LoginScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/../src/ui/LoginScreen.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/ui/OpponentSelection.js" beforeDir="false" afterPath="$PROJECT_DIR$/../src/ui/OpponentSelection.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/ui/Settings.css" beforeDir="false" afterPath="$PROJECT_DIR$/../src/ui/Settings.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/ui/Settings.js" beforeDir="false" afterPath="$PROJECT_DIR$/../src/ui/Settings.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/ui/ShowLogs.js" beforeDir="false" afterPath="$PROJECT_DIR$/../src/ui/ShowLogs.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
