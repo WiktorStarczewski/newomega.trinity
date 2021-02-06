@@ -3,24 +3,8 @@ import React, { useState } from 'react';
 import _ from 'underscore';
 import { ethers } from 'ethers';
 import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert from '@material-ui/lab/Alert';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core';
 import QRCode from 'react-qr-code';
 
-
-const Alert = (props) => {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
-
-const theme = createMuiTheme({
-    overrides: {
-        MuiButton: {
-            text: {
-                background: '#73ffbe',
-            },
-        },
-    },
-});
 
 // props.onDone, props.address, props.balance, props.mnemonic
 export const Settings = (props) => {
@@ -74,13 +58,16 @@ export const Settings = (props) => {
                     TOP UP
                 </div>
             </div>
-            <ThemeProvider theme={theme}>
-                <Snackbar open={toastOpen} autoHideDuration={3000} onClose={onToastClose}>
-                    <Alert onClose={onToastClose} severity="success">
-                        Address copied to clipboard.
-                    </Alert>
-                </Snackbar>
-            </ThemeProvider>
+            <Snackbar
+                open={toastOpen}
+                autoHideDuration={3000}
+                onClose={onToastClose}
+                anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left',
+                }}
+                message="Address copied to clipboard."
+            />
         </div>
     );
 };

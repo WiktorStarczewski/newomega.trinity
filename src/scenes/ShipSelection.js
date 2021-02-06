@@ -10,6 +10,7 @@ import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
 
+const MAX_OFEACH_SHIP = 100;
 
 const getCurrentCP = (selectedShips) => {
     return _.reduce(selectedShips, (memo, num, index) => {
@@ -44,7 +45,7 @@ export const ShipSelection = (props) => {
     const addShip = () => {
         const cost = Ships[currentShip].stats.cp;
         const currentCp = getCurrentCP(selectedShips);
-        if (currentCp + cost <= props.maxCp) {
+        if (currentCp + cost <= props.maxCp && selectedShips[currentShip] < MAX_OFEACH_SHIP) {
             selectedShips[currentShip] = (selectedShips[currentShip] || 0) + 1;
             setSelectedShips(selectedShips); // TODO NEEDED?
             setCurrentCp(getCurrentCP(selectedShips));
@@ -214,12 +215,6 @@ export const ShipSelection = (props) => {
                         </div>
                         <div>
                             Range: {Ships[currentShip].stats.range}
-                        </div>
-                        <div>
-                            Accuracy: {Ships[currentShip].stats.accuracy}
-                        </div>
-                        <div>
-                            Agility: {Ships[currentShip].stats.agility}
                         </div>
                     </div>
                     <div className="uiElement sideBox shipControls">

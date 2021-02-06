@@ -31,10 +31,10 @@ async function main() {
 
   console.log('NewOmega: ', newOmega.address);
 
-  await newOmega.addShip(0, 1, 1000, 30, 5, 2, 6, 6, 25);
-  await newOmega.addShip(1, 4, 4000, 100, 20, 12, 4, 8, 15);
-  await newOmega.addShip(2, 5, 5000, 130, 10, 15, 3, 10, 10);
-  await newOmega.addShip(3, 15, 10000, 200, 5, 20, 2, 12, 0);
+  await newOmega.addShip(0, 1, 100, 60, 10, 2, 4, 4);
+  await newOmega.addShip(1, 3, 180, 100, 20, 12, 3, 6);
+  await newOmega.addShip(2, 4, 200, 90, 30, 15, 2, 6);
+  await newOmega.addShip(3, 10, 340, 70, 50, 20, 1, 8);
 
   console.log('Ships added to NewOmega');
 

@@ -181,11 +181,6 @@
         "internalType": "uint16",
         "name": "range",
         "type": "uint16"
-      },
-      {
-        "internalType": "uint16",
-        "name": "agility",
-        "type": "uint16"
       }
     ],
     "name": "addShip",
@@ -377,11 +372,6 @@
           {
             "internalType": "uint16",
             "name": "range",
-            "type": "uint16"
-          },
-          {
-            "internalType": "uint16",
-            "name": "agility",
             "type": "uint16"
           }
         ],

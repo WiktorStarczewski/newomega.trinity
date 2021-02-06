@@ -1,40 +1,29 @@
-const { expect } = require("chai");
+// import { ethers, BigNumber } from 'ethers';
 
-describe("GameEngine", function() {
-    it("Should return the new greeting once it's changed", async () => {
+const { expect } = require("chai");
+const { BigNumber } = require("ethers");
+
+describe("NewOmega", function() {
+    it("Should run successfully", async () => {
         const accounts = await ethers.getSigners();
 
-        const GameEngineLibrary = await hre.ethers.getContractFactory("GameEngineLibrary");
-        const gameEngineLibrary = await GameEngineLibrary.deploy();
-        await gameEngineLibrary.deployed();
+        const NewOmega = await hre.ethers.getContractFactory('NewOmega');
+        const newOmega = await NewOmega.deploy();
+        await newOmega.deployed();
 
-        // We get the contract to deploy
-        const GameEngine = await hre.ethers.getContractFactory("GameEngine", {
-            libraries: {
-                GameEngineLibrary: gameEngineLibrary.address,
-            },
-        });
-        const gameEngine = await GameEngine.deploy();
-        await gameEngine.deployed();
+        await newOmega.addShip(0, 1, 100, 60, 10, 2, 4, 4);
+        await newOmega.addShip(1, 3, 180, 100, 20, 12, 3, 6);
+        await newOmega.addShip(2, 4, 200, 90, 30, 15, 2, 6);
+        await newOmega.addShip(3, 10, 340, 70, 50, 20, 1, 8);
 
-        const GameManager = await hre.ethers.getContractFactory("GameManager");
-        const gameManager = await GameManager.deploy(gameEngine.address);
-        await gameManager.deployed();
+        await newOmega.registerDefence([10,10,10,10], 0, ethers.utils.formatBytes32String('test1'));
 
-        await gameEngine.addShip(0, 1, 1000, 30, 5, 2, 4, 4, 25);
-        await gameEngine.addShip(1, 4, 4000, 100, 20, 12, 3, 7, 15);
-        await gameEngine.addShip(2, 5, 5000, 130, 10, 15, 2, 8, 10);
-        await gameEngine.addShip(3, 15, 10000, 200, 5, 20, 1, 8, 0);
+        newOmega.on('FightComplete', async (attacker, defender, result) => {
+            // console.log(result);
 
-        const gameManagerAsAnother = gameManager.connect(accounts[1]);
-        await gameManagerAsAnother.registerDefence([10,10,10,10], 0, 'test1');
+            // const leaderboard = await newOmega.getLeaderboard();
 
-        gameManager.on('FightComplete', async (attacker, defender, result) => {
-            console.log(result);
-
-            const leaderboard = await gameManager.getLeaderboard();
-
-            console.log('  # leaderboard # ', leaderboard);
+            // console.log('  # leaderboard # ', leaderboard);
         });
 
         // gameManager.events.FightComplete().watch((error, result) => {
@@ -43,15 +32,24 @@ describe("GameEngine", function() {
         //     }
         // });
 
-        const result = await gameEngine.fight([50,50,50,50], [50,50,50,50], 0, 0);
+        const getRandomInt = (min, max) => {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min) + min);
+        }
+        const seed = getRandomInt(0, Number.MAX_SAFE_INTEGER);
 
-        // const result = await gameManager.attack(accounts[1].address, [5,5,5,5], 0);
+        console.log('Seed ', seed);
+
+        // const result = await newOmega.replay(BigNumber.from(seed), [100,15,15,15], [100,15,15,15], 0, 0);
+
+        const result = await newOmega.attack(accounts[0].address, [10,10,10,10], 0);
 
         await new Promise((resolve, reject) => {
             setTimeout(resolve, 5000);
         })
 
-        console.log('###RESULT ', result);
+        // console.log('###RESULT ', result);
 
         // const result2 = await result.wait();
 

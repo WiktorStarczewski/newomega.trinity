@@ -6,11 +6,11 @@
       "contentHash": "cc4777addd464ea56fa35b1c45df0591",
       "sourceName": "hardhat/console.sol",
       "solcConfig": {
-        "version": "0.8.0",
+        "version": "0.8.1",
         "settings": {
           "optimizer": {
             "enabled": true,
-            "runs": 200
+            "runs": 1337
           },
           "outputSelection": {
             "*": {
@@ -36,11 +36,11 @@
       ]
     },
     "/Users/wiktor/projects/newomega-trinity/org.celrisen.newomega/hardhat/contracts/NewOmega.sol": {
-      "lastModificationDate": 1612475791648,
-      "contentHash": "47e1cf1cf894131e6cc877b991baf495",
+      "lastModificationDate": 1612647855327,
+      "contentHash": "481425c0b274a6e3b5bc2545eecee208",
       "sourceName": "contracts/NewOmega.sol",
       "solcConfig": {
-        "version": "0.8.0",
+        "version": "0.8.1",
         "settings": {
           "optimizer": {
             "enabled": true,

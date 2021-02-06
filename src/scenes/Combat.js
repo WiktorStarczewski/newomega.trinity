@@ -105,9 +105,35 @@ export const Combat = (props) => {
 
     const moveShips = (scene, move, isLhs) => {
         const meshes = isLhs ? shipMeshesLhs[move.source] : shipMeshesRhs[move.source];
+        const alreadyThereLhs = _.filter(shipMeshesLhs, (meshes) => {
+            return meshes[0] && meshes[0].position.x === move.targetPosition;
+        });
+        const alreadyThereRhs = _.filter(shipMeshesRhs, (meshes) => {
+            return meshes[0] && meshes[0].position.x === move.targetPosition;
+        });
+        const alreadyThere = alreadyThereLhs.length + alreadyThereRhs.length;
+
+        const posYLhs = _.map(alreadyThereLhs, (meshes) => {
+            return meshes[0] ? meshes[0].position.y : Number.MAX_SAFE_INTEGER;
+        });
+        const posYRhs = _.map(alreadyThereRhs, (meshes) => {
+            return meshes[0] ? meshes[0].position.y : Number.MAX_SAFE_INTEGER;
+        });
+
+        let targetY = alreadyThere;
+        for (let proposalY = 0; proposalY < alreadyThere; proposalY++) {
+            if (!_.contains(posYLhs, proposalY) &&
+                !_.contains(posYRhs, proposalY)) {
+                targetY = proposalY;
+            }
+        }
 
         return Promise.all(_.map(meshes, (mesh) => {
             return new Promise((resolve/*, reject*/) => {
+                if (mesh.position.x === move.targetPosition) {
+                    return resolve();
+                }
+
                 const framerate = 10;
                 const slide = new Animation(_.uniqueId(), 'position.x', framerate,
                     Animation.ANIMATIONTYPE_FLOAT, Animation.ANIMATIONLOOPMODE_CONSTANT);
@@ -127,8 +153,26 @@ export const Combat = (props) => {
                     }
                 ];
                 slide.setKeys(keyFrames);
-                mesh.animations = [ slide ];
 
+                const adjustY = new Animation(_.uniqueId(), 'position.y', framerate,
+                    Animation.ANIMATIONTYPE_FLOAT, Animation.ANIMATIONLOOPMODE_CONSTANT);
+                const keyFramesAdjustY = [
+                    {
+                        frame: 0,
+                        value: mesh.position.y,
+                    },
+                    {
+                        frame: framerate,
+                        value: mesh.position.y + ((targetY - mesh.position.y) / 2),
+                    },
+                    {
+                        frame: 2*framerate,
+                        value: targetY,
+                    }
+                ];
+                adjustY.setKeys(keyFramesAdjustY);
+
+                mesh.animations = [ slide, adjustY ];
                 scene.beginAnimation(mesh, 0, 2 * framerate, false, 2, resolve);
             });
         }));

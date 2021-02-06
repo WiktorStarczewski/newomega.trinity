@@ -12,6 +12,7 @@ import { ShowLogs } from './ui/ShowLogs';
 import { Settings } from './ui/Settings';
 import { Ships } from './definitions/Ships';
 import { FastProvider } from './common/FastProvider';
+import Snackbar from '@material-ui/core/Snackbar';
 import SettingsIcon from '@material-ui/icons/Settings';
 import _ from 'underscore';
 
@@ -31,9 +32,10 @@ const Modes = {
     Settings: 10,
 };
 
-const TRAINING_SELECTION = [25, 18, 16, 6];
+const TRAINING_SELECTION = [35, 25, 15, 10];
 const DEFAULT_PROVIDER = 'ropsten';
 const INFURA_KEY = 'dbb5964e1c98437389d0c43ee39db58a';
+const CONTRACT_ADDRESS = '0xaa2c8BF9416B5DDCFee2f886214e041dF639EB4a';
 
 
 export default class OmegaApp extends Component {
@@ -62,6 +64,8 @@ export default class OmegaApp extends Component {
             blockNumber: 0,
             newOmegaContract: null,
             hasUnseenFights: false,
+            toastOpen: false,
+            toastContent: '',
             playerName: window.localStorage.getItem('OmegaPlayerName') || 'Anonymous',
         };
 
@@ -93,7 +97,10 @@ export default class OmegaApp extends Component {
 
                 await tx.wait();
             } catch (error) {
-                debugger;
+                this.setState({
+                    toastOpen: true,
+                    toastContent: 'Transaction failed (Defence).',
+                });
             }
         } else if (this.state.settingAttack) {
             try {
@@ -105,7 +112,10 @@ export default class OmegaApp extends Component {
 
                 await tx.wait();
             } catch (error) {
-                debugger;
+                this.setState({
+                    toastOpen: true,
+                    toastContent: 'Transaction failed (Attack).',
+                });
             }
         } else {
             const seed = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
@@ -120,7 +130,11 @@ export default class OmegaApp extends Component {
                     this.state.trainingOpponentCommander
                 );
             } catch (error) {
-                return this.setState(this.defaultLoadedState);
+                return this.setState({
+                    ...this.defaultLoadedState,
+                    toastOpen: true,
+                    toastContent: 'Transaction failed (Replay).',
+                });
             }
 
             return this.setState({
@@ -215,11 +229,25 @@ export default class OmegaApp extends Component {
             });
         });
 
+        provider._newOmegaGasEstimated = (gas) => {
+            this.setState({
+                toastOpen: true,
+                toastContent: `Estimated gas: ${gas}`,
+            });
+        };
+
         provider.on('block', (blockNumber) => {
             this._checkBalance(provider, ownAccount);
             this.setState({
                 blockNumber,
             });
+        });
+    }
+
+    onToastClose() {
+        this.setState({
+            toastOpen: false,
+            toastContent: '',
         });
     }
 
@@ -506,6 +534,16 @@ export default class OmegaApp extends Component {
                         </video>
                     </div>
                 }
+                <Snackbar
+                    open={this.state.toastOpen}
+                    anchorOrigin={{
+                        vertical: 'top',
+                        horizontal: 'left',
+                    }}
+                    autoHideDuration={6000}
+                    onClose={this.onToastClose.bind(this)}
+                    message={this.state.toastContent}
+                />
             </div>
         );
     }
@@ -550,8 +588,7 @@ export default class OmegaApp extends Component {
 
     _loadContracts(provider, signer, ownAccount) {
         const newOmegaJson = require('./abi/NewOmega.json');
-        const newOmegaAddress = '0x74691ecA89eb9b842932ddEB9111c3CE21F9D6Be';
-        const newOmegaContract = new ethers.Contract(newOmegaAddress, newOmegaJson, signer);
+        const newOmegaContract = new ethers.Contract(CONTRACT_ADDRESS, newOmegaJson, signer);
 
         this.attachBlockchainEvents(provider, newOmegaContract, ownAccount);
         this.setState({
