@@ -6,7 +6,10 @@ import '@babylonjs/loaders';
 import { Commanders, CommanderRaritiesColors, commanderRarityToString } from '../definitions/Commanders';
 import { Ships } from '../definitions/Ships';
 import { OmegaLoadingScreen } from '../common/OmegaLoadingScreen';
+import ArrowRightIcon from '@material-ui/icons/ArrowRight';
+import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
 import './CommanderSelection.css';
+
 
 export const CommanderSelection = (props) => {
     const [ currentCommander, setCurrentCommander ] = useState(0);
@@ -162,14 +165,18 @@ export const CommanderSelection = (props) => {
                     <div className="uiElement commanderDescription">
                         {Commanders[currentCommander].description}
                     </div>
-                    <div className="uiElement chevron left" onClick={prevCommander}/>
-                    <div className="uiElement chevron right" onClick={nextCommander}/>
+                    <div className="uiElement chevron left" onClick={prevCommander}>
+                        <ArrowLeftIcon fontSize="large"/>
+                    </div>
+                    <div className="uiElement chevron right" onClick={nextCommander}>
+                        <ArrowRightIcon fontSize="large"/>
+                    </div>
                     <div className="uiElement doneBox bottomBox" onClick={onDone}>
                         DONE
                     </div>
-                    <a className="uiElement cancelBox bottomBox" href="/">
+                    <div className="uiElement cancelBox bottomBox" onClick={props.onCancel}>
                         BACK
-                    </a>
+                    </div>
                     <div className="omegaTip">
                         <div className="title">
                             Commander Selection

@@ -22,7 +22,7 @@ export const Leaderboard = (props) => {
 
     const leaderboard = _.clone(props.leaderboard);
     leaderboard.sort((lhs, rhs) => {
-        return rhs.wins.toNumber() - lhs.wins.toNumber();
+        return rhs.wins - lhs.wins;
     });
 
     return (
@@ -33,9 +33,9 @@ export const Leaderboard = (props) => {
                 <div className="mainMenu">
                     {_.map(leaderboard, renderEntry)}
                 </div>
-                <a className="uiElement cancelBox bottomBox" href="/">
+                <div className="uiElement cancelBox bottomBox" onClick={props.onCancel}>
                     BACK
-                </a>
+                </div>
             </div>
         </div>
     );

@@ -147,6 +147,15 @@ canvas {
     background-size: cover;
 }
 
+.App .introVideo {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: black;
+}
+
 .App .bottomElement {
     bottom: 0.5rem;
     font-size: 0.5rem;
@@ -185,7 +194,7 @@ canvas {
     top: 35%;
     left: 35%;
     width: 30%;
-    height: 30%;
+    height: 40%;
     background: url("./newomega_trans7.png") no-repeat center center;
     background-size: 75%;
 }
@@ -306,4 +315,12 @@ canvas {
 
 .App .mainMenu .mainMenuItem.unread {
     animation: pulsebackground 1s infinite;
+}
+
+video::-webkit-media-controls-overlay-play-button {
+    display: none !important;
+}
+
+canvas:focus {
+    outline: none;
 }

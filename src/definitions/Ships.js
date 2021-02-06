@@ -1,9 +1,9 @@
-import { Color3 } from '@babylonjs/core';
+import { Color3, Vector3 } from '@babylonjs/core';
 
 export const Ships = [
     {
         name: 'Frigate',
-        asset: 'assets/frigate/',
+        asset: 'assets/enif_cruiser/',
         description: 'Cheap, quick and agile, the frigate can be used as a quick strike weapon, able to reach enemy lines quickest. Can not withstand much heat though.',
         stats: {
             cp: 1,
@@ -17,7 +17,7 @@ export const Ships = [
             range: 6,
             agility: 25,
         },
-        scale: 1,
+        scale: 8,
         combatScale: 0.6,
         visuals: {
             beamColor: new Color3(0, 1, 0),
@@ -25,8 +25,8 @@ export const Ships = [
         },
     },
     {
-        name: 'Cruiser',
-        asset: 'assets/cruiser/',
+        name: 'Light Cruiser',
+        asset: 'assets/drone_v2/',
         description: 'As lightest of the heavier ships, the cruiser retains some of the speed and maneuverability of the frigate while offering big improvements in the hull and weaponry.',
         stats: {
             cp: 4,
@@ -40,16 +40,17 @@ export const Ships = [
             range: 8,
             agility: 15,
         },
-        scale: 6,
-        combatScale: 0.4,
+        scale: 1400,
+        combatScale: 0.6,
         visuals: {
             beamColor: new Color3(0.2, 0.2, 1),
             beamWidth: Math.PI / 96,
+            rotationModifierY: -1,
         },
     },
     {
         name: 'Destroyer',
-        asset: 'assets/destroyer/',
+        asset: 'assets/zeneca_brute/',
         description: 'The destroyer is an effective killing machine, providing both effective support and serving as an artillery line raining heavy damage on enemy ships.',
         stats: {
             cp: 5,
@@ -63,11 +64,13 @@ export const Ships = [
             range: 10,
             agility: 10,
         },
-        scale: 9,
-        combatScale: 0.5,
+        scale: 400,
+        combatScale: 0.8,
         visuals: {
             beamColor: new Color3(1, 1, 1),
             beamWidth: Math.PI / 96,
+            rotationModifierY: 2,
+            rotationOddOffsetY: Math.PI,
         },
     },
     {
@@ -86,8 +89,8 @@ export const Ships = [
             range: 12,
             agility: 0,
         },
-        scale: 12,
-        combatScale: 0.6,
+        scale: 16,
+        combatScale: 0.8,
         visuals: {
             beamColor: new Color3(1, 0, 1),
             beamWidth: Math.PI / 64,

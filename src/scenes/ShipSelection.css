@@ -45,6 +45,17 @@
     height: 2rem;
 }
 
+.ShipSelection .ui .shipControls .addShip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.ShipSelection .ui .shipControls .removeShip {
+    margin-top: 0.5rem;
+}
+
 .ShipSelection .ui .shipDescription {
     bottom: 0.5rem;
     width: 50%;
@@ -61,19 +72,15 @@
 }
 
 .ShipSelection .ui .chevron.left {
-    left: 1rem;
+    left: -0.5rem;
 }
 
-.ShipSelection .ui .chevron.left:before {
-    content: '<';
+.ShipSelection .ui .chevron .MuiSvgIcon-root {
+    font-size: 5rem;
 }
 
 .ShipSelection .ui .chevron.right {
-    right: 1rem;
-}
-
-.ShipSelection .ui .chevron.right:before {
-    content: '>';
+    right: -0.5rem;
 }
 
 .ShipSelection .modal {

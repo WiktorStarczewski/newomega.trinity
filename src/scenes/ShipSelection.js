@@ -6,6 +6,11 @@ import '@babylonjs/loaders';
 import { Ships } from '../definitions/Ships';
 import { OmegaLoadingScreen } from '../common/OmegaLoadingScreen';
 import './ShipSelection.css';
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
+import ArrowRightIcon from '@material-ui/icons/ArrowRight';
+import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
+
 
 const getCurrentCP = (selectedShips) => {
     return _.reduce(selectedShips, (memo, num, index) => {
@@ -117,8 +122,8 @@ export const ShipSelection = (props) => {
         scene.activeCameras.push(camera);
         camera.attachControl(canvas, true);
 
-        const light = new HemisphericLight('light1', Vector3.Up(), scene);
-        light.intensity = 0.7;
+        const light = new HemisphericLight('light1', new Vector3(0, Math.PI / 2, 0), scene);
+        light.intensity = 2.0;
 
         const background = new Layer('background',
             '/assets/images/jeremy-perkins-uhjiu8FjnsQ-unsplash.jpg', scene);
@@ -187,7 +192,7 @@ export const ShipSelection = (props) => {
                     </div>
                     <div className="uiElement sideBox shipControls">
                         <div className="addOrRemoveShip addShip" onClick={addShip}>
-                            +
+                            <AddCircleOutlineIcon fontSize="large"/>
                         </div>
                         <div>
                             Max CP: <span className="maxCp">{props.maxCp}</span>
@@ -202,20 +207,24 @@ export const ShipSelection = (props) => {
                             Used CP: {currentCp}
                         </div>
                         <div className="addOrRemoveShip removeShip" onClick={removeShip}>
-                            -
+                            <RemoveCircleOutlineIcon fontSize="large"/>
                         </div>
                     </div>
                     <div className="uiElement shipDescription">
                         {Ships[currentShip].description}
                     </div>
-                    <div className="uiElement chevron left" onClick={prevShip}/>
-                    <div className="uiElement chevron right" onClick={nextShip}/>
+                    <div className="uiElement chevron left" onClick={prevShip}>
+                        <ArrowLeftIcon fontSize="large"/>
+                    </div>
+                    <div className="uiElement chevron right" onClick={nextShip}>
+                        <ArrowRightIcon fontSize="large"/>
+                    </div>
                     <div className="uiElement doneBox bottomBox" onClick={checkEnoughShipsAndDone}>
                         DONE
                     </div>
-                    <a className="uiElement cancelBox bottomBox" href="/">
+                    <div className="uiElement cancelBox bottomBox" onClick={props.onCancel}>
                         BACK
-                    </a>
+                    </div>
                     <div className="omegaTip">
                         <div className="title">
                             Ship Selection

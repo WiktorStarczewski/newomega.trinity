@@ -9,13 +9,26 @@
 }
 
 .Settings .qr {
-    position: fixed;
-    bottom: 0.5rem;
-    left: calc(50% - 32px);
-    width: 64px;
-    height: 64px;
+    width: 128px;
+    height: 128px;
 }
 
 .Settings .mnemonic {
     margin-top: 1rem;
+}
+
+.Settings .address .guid {
+    user-select: all;
+}
+
+.Settings .mnemonic .mnemonic-content {
+    user-select: all;
+}
+
+.Settings .info {
+    margin-left: 1.5rem;
+    height: 128px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }

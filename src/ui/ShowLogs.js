@@ -43,9 +43,9 @@ export const ShowLogs = (props) => {
                 <div className="mainMenu">
                     {_.map(logs, renderLog)}
                 </div>
-                <a className="uiElement cancelBox bottomBox" href="/">
+                <div className="uiElement cancelBox bottomBox" onClick={props.onCancel}>
                     BACK
-                </a>
+                </div>
             </div>
         </div>
     );

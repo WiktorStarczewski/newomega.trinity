@@ -3,3 +3,29 @@
     background: url("../images/stars5.jpg") no-repeat center center;
     background-size: cover;
 }
+
+.LoginScreen .loginDetails {
+    position: absolute;
+    top: 40%;
+    left: 0;
+    width: 100%;
+    height: 30%;
+    padding: 0 0.5rem;
+}
+
+.LoginScreen .mnemonicInput {
+    height: 100%;
+    background: transparent;
+    color: white;
+    border: none;
+    width: 50%;
+}
+
+.LoginScreen .mnemonicInput::placeholder {
+    color: white;
+}
+
+.LoginScreen .mnemonicInput:focus {
+    border: none;
+    outline: none;
+}

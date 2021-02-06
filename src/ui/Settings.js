@@ -5,7 +5,7 @@ import { ethers } from 'ethers';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core';
-import QRCode from 'qrcode.react';
+import QRCode from 'react-qr-code';
 
 
 const Alert = (props) => {
@@ -27,7 +27,7 @@ export const Settings = (props) => {
     const [toastOpen, setToastOpen] = useState(false);
 
     const onTopup = () => {
-        window.open(`https://faucet.ropsten.be/donate/${props.address}`, '_blank');
+        window.open(`https://faucet.dimensions.network/`, '_blank');
         props.onDone();
     }
 
@@ -41,33 +41,35 @@ export const Settings = (props) => {
         setToastOpen(false);
     }
 
+    const qrCodeValue = `ethereum:${props.address}`;
+
     return (
         <div className="Settings">
             <div className="ui">
                 <div className="mainTitle">
                 </div>
                 <div className="mainMenu">
+                    <div className="qr">
+                        <QRCode value={qrCodeValue} size={128}/>
+                    </div>
                     <div className="info" onClick={copyAddressToClipboard}>
                         <div className="network">
                             Network: Ethereum Ropsten (Testnet)
                         </div>
                         <div className="address">
-                            Address: {props.address}
+                            Address: <span className="guid">{props.address}</span>
                         </div>
                         <div className="balance">
                             Balance: Ξ{props.balance}
                         </div>
                         <div className="mnemonic">
-                            Mnemonic: {props.mnemonic}
+                            Mnemonic: <span className="mnemonic-content">{props.mnemonic}</span>
                         </div>
                     </div>
-                    <div className="qr">
-                        <QRCode value={props.address} size={64}/>
-                    </div>
                 </div>
-                <a className="uiElement cancelBox bottomBox" href="/">
+                <div className="uiElement cancelBox bottomBox" onClick={props.onCancel}>
                     BACK
-                </a>
+                </div>
                 <div className="uiElement doneBox bottomBox" onClick={onTopup}>
                     TOP UP
                 </div>

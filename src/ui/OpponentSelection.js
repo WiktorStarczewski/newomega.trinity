@@ -32,9 +32,9 @@ export const OpponentSelection = (props) => {
                 <div className="mainMenu">
                     {_.map(opponents, renderOpponent)}
                 </div>
-                <a className="uiElement cancelBox bottomBox" href="/">
+                <div className="uiElement cancelBox bottomBox" onClick={props.onCancel}>
                     BACK
-                </a>
+                </div>
             </div>
         </div>
     );

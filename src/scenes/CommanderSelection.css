@@ -49,17 +49,13 @@
 }
 
 .CommanderSelection .ui .chevron.left {
-    left: 1rem;
-}
-
-.CommanderSelection .ui .chevron.left:before {
-    content: '<';
+    left: -0.5rem;
 }
 
 .CommanderSelection .ui .chevron.right {
-    right: 1rem;
+    right: -0.5rem;
 }
 
-.CommanderSelection .ui .chevron.right:before {
-    content: '>';
+.CommanderSelection .ui .chevron .MuiSvgIcon-root {
+    font-size: 5rem;
 }

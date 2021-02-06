@@ -18,20 +18,23 @@ import _ from 'underscore';
 
 
 const Modes = {
-    LoginScreen: 0,
-    MainScreen: 1,
-    ShipSelection: 2,
-    CommanderSelection: 3,
-    CommanderPreview: 4,
-    Combat: 5,
-    OpponentSelection: 6,
-    ShowLogs: 7,
-    Leaderboard: 8,
-    Settings: 9,
+    PlayingVideo: 0,
+    LoginScreen: 1,
+    MainScreen: 2,
+    ShipSelection: 3,
+    CommanderSelection: 4,
+    CommanderPreview: 5,
+    Combat: 6,
+    OpponentSelection: 7,
+    ShowLogs: 8,
+    Leaderboard: 9,
+    Settings: 10,
 };
 
 const TRAINING_SELECTION = [25, 18, 16, 6];
 const DEFAULT_PROVIDER = 'ropsten';
+const INFURA_KEY = 'dbb5964e1c98437389d0c43ee39db58a';
+
 
 export default class OmegaApp extends Component {
     constructor(props) {
@@ -53,7 +56,7 @@ export default class OmegaApp extends Component {
         };
 
         this.defaultUnloadedState = {
-            mode: Modes.LoginScreen,
+            mode: Modes.PlayingVideo,
             ownAccount: null,
             ethBalance: 0,
             blockNumber: 0,
@@ -90,6 +93,7 @@ export default class OmegaApp extends Component {
 
                 await tx.wait();
             } catch (error) {
+                debugger;
             }
         } else if (this.state.settingAttack) {
             try {
@@ -101,6 +105,7 @@ export default class OmegaApp extends Component {
 
                 await tx.wait();
             } catch (error) {
+                debugger;
             }
         } else {
             const seed = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
@@ -185,7 +190,6 @@ export default class OmegaApp extends Component {
         try{
             myDefence = await this.state.newOmegaContract.getOwnDefence();
         } catch (error) {
-            return this.setState(this.defaultLoadedState);
         }
 
         const trainingOpponentSelection = myDefence && myDefence.isInitialised
@@ -360,7 +364,7 @@ export default class OmegaApp extends Component {
             loading: true,
         }, () => {
             _.defer(() => {
-                const provider = ethers.getDefaultProvider(DEFAULT_PROVIDER);
+                const provider = new FastProvider(DEFAULT_PROVIDER, INFURA_KEY);
                 const signer = options.finisher().connect(provider);
                 this._initWeb3(provider, signer);
             });
@@ -370,6 +374,16 @@ export default class OmegaApp extends Component {
     showSettings() {
         this.setState({
             mode: Modes.Settings,
+        });
+    }
+
+    genericCancelHandler() {
+        this.setState(this.defaultLoadedState);
+    }
+
+    introVideoComplete() {
+        this.setState({
+            mode: Modes.LoginScreen,
         });
     }
 
@@ -424,18 +438,22 @@ export default class OmegaApp extends Component {
                 {this.state.mode === Modes.Settings &&
                     <Settings onDone={() => { this.setState(this.defaultLoadedState) }}
                         address={this.state.ownAccount} balance={ethBalanceString}
-                        mnemonic={this.state.signer && this.state.signer.mnemonic.phrase}/>
+                        mnemonic={this.state.signer && this.state.signer.mnemonic.phrase}
+                        onCancel={this.genericCancelHandler.bind(this)}/>
                 }
                 {this.state.mode === Modes.ShipSelection &&
                     <ShipSelection maxCp={this.state.trainingCp}
                         defaultShips={this.state.trainingOpponentSelection}
-                        onDone={this.shipSelectionDone.bind(this)}/>
+                        onDone={this.shipSelectionDone.bind(this)}
+                        onCancel={this.genericCancelHandler.bind(this)}/>
                 }
                 {this.state.mode === Modes.CommanderSelection &&
-                    <CommanderSelection onDone={this.commanderSelectionDone.bind(this)}/>
+                    <CommanderSelection onDone={this.commanderSelectionDone.bind(this)}
+                        onCancel={this.genericCancelHandler.bind(this)}/>
                 }
                 {this.state.mode === Modes.CommanderPreview &&
-                    <CommanderSelection onDone={this.commanderPreviewDone.bind(this)}/>
+                    <CommanderSelection onDone={this.commanderPreviewDone.bind(this)}
+                        onCancel={this.genericCancelHandler.bind(this)}/>
                 }
                 {this.state.mode === Modes.Combat &&
                     <Combat selectionLhs={this.state.trainingSelfSelection}
@@ -443,19 +461,24 @@ export default class OmegaApp extends Component {
                         commanderLhs={this.state.trainingSelfCommander}
                         commanderRhs={0}
                         result={this.state.trainingResult}
+                        onCancel={this.genericCancelHandler.bind(this)}
                     />
                 }
                 {this.state.mode === Modes.OpponentSelection &&
                     <OpponentSelection opponents={this.state.defenders}
                         onDone={this.opponentSelectionDone.bind(this)}
+                        onCancel={this.genericCancelHandler.bind(this)}
                     />
                 }
                 {this.state.mode === Modes.ShowLogs &&
                     <ShowLogs logs={this.state.logs}
-                        opponents={this.state.defenders} onDone={this.logSelectionDone.bind(this)}/>
+                        opponents={this.state.defenders}
+                        onDone={this.logSelectionDone.bind(this)}
+                        onCancel={this.genericCancelHandler.bind(this)}/>
                 }
                 {this.state.mode === Modes.Leaderboard &&
-                    <Leaderboard leaderboard={this.state.leaderboard}/>
+                    <Leaderboard leaderboard={this.state.leaderboard}
+                        onCancel={this.genericCancelHandler.bind(this)}/>
                 }
                 <div
                     id="omegaLoadingScreen"
@@ -471,12 +494,20 @@ export default class OmegaApp extends Component {
                         </span>
                     </div>
                 </div>
+                {this.state.mode === Modes.PlayingVideo &&
+                    <div className="introVideo">
+                        <video width="100%"
+                            height="100%"
+                            autoPlay={true}
+                            muted={true}
+                            onEnded={this.introVideoComplete.bind(this)}
+                            poster="noposter">
+                            <source src="assets/videos/intro.mp4" type="video/mp4"/>
+                        </video>
+                    </div>
+                }
             </div>
         );
-    }
-
-    componentDidMount() {
-//        this._initWeb3();
     }
 
     _formatBalance(balance) {

@@ -24,9 +24,17 @@ export const Combat = (props) => {
     const afterImportMeshes = (scene, newMeshes, currentShip,
         basePosition, count, direction, isLhs) => {
 
-        newMeshes[0].position = new Vector3(basePosition + currentShip * direction, 0, -currentShip * 0.2);
-        newMeshes[0].rotation = new Vector3(Math.PI * 2, Math.PI / 2  * direction, Math.PI / 2 * -direction);
-        newMeshes[0].scalingDeterminant = 0.00013 * Ships[currentShip].scale;
+        const rotationModifierY = Ships[currentShip].visuals.rotationModifierY || 1;
+        const rotationOddOffsetY = Ships[currentShip].visuals.rotationOddOffsetY > 0
+            ? Ships[currentShip].visuals.rotationOddOffsetY
+            : 0;
+
+        newMeshes[0].position = new Vector3(basePosition + currentShip * direction, 0, 0);
+        newMeshes[0].rotation = new Vector3(
+            Math.PI,
+            (-Math.PI / 2 * direction * rotationModifierY) + (direction < 0 ? rotationOddOffsetY : 0),
+            Math.PI * -direction);
+        newMeshes[0].scalingDeterminant = 0.0001 * Ships[currentShip].scale;
 
         _.each(newMeshes, (newMesh) => {
             newMesh.material = new StandardMaterial(_.uniqueId(), scene);
@@ -45,9 +53,9 @@ export const Combat = (props) => {
             const clonedMesh = newMeshes[0].clone();
 
             if (i % 2 === 0) {
-                clonedMesh.position.y -= (Math.floor(i / 2) + 1) * Ships[currentShip].combatScale;
+                clonedMesh.position.z -= (Math.floor(i / 2) + 1) * Ships[currentShip].combatScale;
             } else {
-                clonedMesh.position.y += (Math.floor(i / 2) + 1) * Ships[currentShip].combatScale;
+                clonedMesh.position.z += (Math.floor(i / 2) + 1) * Ships[currentShip].combatScale;
             }
 
             if (isLhs) {
@@ -279,10 +287,10 @@ export const Combat = (props) => {
         scene.getEngine().loadingScreen = new OmegaLoadingScreen();
 
         const camera = new ArcRotateCamera('camera1',
-            Math.PI / 2, (Math.PI / 2) + Math.PI / 4, 18.5, Vector3.Zero(), scene);
+            Math.PI / 2, Math.PI / 4, 20, Vector3.Zero(), scene);
         camera.minZ = 0.001;
-        camera.lowerRadiusLimit = 18.5;
-        camera.upperRadiusLimit = 18.5;
+        camera.lowerRadiusLimit = 8;
+        camera.upperRadiusLimit = 20;
         scene.activeCameras.push(camera);
         camera.attachControl(canvas, true);
 
@@ -345,9 +353,9 @@ export const Combat = (props) => {
                                 <div className="winner">
                                     {getWinnerString()}
                                 </div>
-                                <a className="exitButton" href="/">
+                                <div className="exitButton" onClick={props.onCancel}>
                                     EXIT
-                                </a>
+                                </div>
                             </div>
                         </div>
                     }

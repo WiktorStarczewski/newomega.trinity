@@ -7,7 +7,8 @@ import {
   IonRouterOutlet,
   IonTabBar,
   IonTabButton,
-  IonTabs
+  IonTabs,
+  setupConfig
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { apps, flash, send } from 'ionicons/icons';
@@ -35,6 +36,11 @@ import './theme/variables.css';
 declare let appManager: AppManagerPlugin.AppManager;
 declare let titleBarManager: TitleBarPlugin.TitleBarManager;
 
+setupConfig({
+  swipeBackEnabled: false,
+  hardwareBackButton: false,
+});
+
 const App: React.FC = () => {
   document.addEventListener('deviceready', () => {
     titleBarManager.setVisibility(
@@ -42,6 +48,9 @@ const App: React.FC = () => {
       1); // HIDDEN
     appManager.setVisible('show');
     window.screen.orientation.lock('landscape');
+
+    document.addEventListener('backbutton', () => {
+    }, false);
   }, false);
 
   return <IonApp>
