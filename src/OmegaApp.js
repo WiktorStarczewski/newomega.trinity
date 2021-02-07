@@ -11,7 +11,7 @@ import { LoginScreen } from './ui/LoginScreen';
 import { ShowLogs } from './ui/ShowLogs';
 import { Settings } from './ui/Settings';
 import { Ships } from './definitions/Ships';
-import { FastProvider } from './common/FastProvider';
+import { FastJsonRpcProvider } from './common/FastProvider';
 import Snackbar from '@material-ui/core/Snackbar';
 import SettingsIcon from '@material-ui/icons/Settings';
 import _ from 'underscore';
@@ -33,9 +33,10 @@ const Modes = {
 };
 
 const TRAINING_SELECTION = [35, 25, 15, 10];
-const DEFAULT_PROVIDER = 'ropsten';
+const DEFAULT_INFURA_PROVIDER = 'ropsten';
+const DEFAULT_ELAETH_PROVIDER = 'http://api.elastos.io:21636';
 const INFURA_KEY = 'dbb5964e1c98437389d0c43ee39db58a';
-const CONTRACT_ADDRESS = '0xd94805F1Dbae58DDEa5A53F63B2D1991dbF2288c';
+const CONTRACT_ADDRESS = '0xC4f43c76c551D56135136352a40C7882E99DAeE3';
 
 
 export default class OmegaApp extends Component {
@@ -392,7 +393,7 @@ export default class OmegaApp extends Component {
             loading: true,
         }, () => {
             _.defer(() => {
-                const provider = new FastProvider(DEFAULT_PROVIDER, INFURA_KEY);
+                const provider = new FastJsonRpcProvider(DEFAULT_ELAETH_PROVIDER);
                 const signer = options.finisher().connect(provider);
                 this._initWeb3(provider, signer);
             });
@@ -554,8 +555,8 @@ export default class OmegaApp extends Component {
 
     async _initWeb3(provider, signer) {
         // const provider = new TrinitySDK.Ethereum.Web3.Providers.TrinityWeb3Provider();
-        provider = provider || new FastProvider(window.ethereum);
-        signer = signer || provider.getSigner();
+        // provider = provider || new FastProvider(window.ethereum);
+        // signer = signer || provider.getSigner();
 
         this.setState({
             loading: true,

@@ -11,7 +11,7 @@ export const Settings = (props) => {
     const [toastOpen, setToastOpen] = useState(false);
 
     const onTopup = () => {
-        window.open(`https://faucet.dimensions.network/`, '_blank');
+        window.open(`https://eth-faucet.elastos.io/`, '_blank');
         props.onDone();
     }
 
@@ -38,7 +38,7 @@ export const Settings = (props) => {
                     </div>
                     <div className="info" onClick={copyAddressToClipboard}>
                         <div className="network">
-                            Network: Ethereum Ropsten (Testnet)
+                            Network: Elastos Ethereum (Testnet)
                         </div>
                         <div className="address">
                             Address: <span className="guid">{props.address}</span>
