@@ -205,6 +205,11 @@ export default class OmegaApp extends Component {
         try{
             myDefence = await this.state.newOmegaContract.getOwnDefence();
         } catch (error) {
+            return this.setState({
+                ...this.defaultLoadedState,
+                toastOpen: true,
+                toastContent: 'Transaction failed (Get Own Defence).',
+            });
         }
 
         const trainingOpponentSelection = myDefence && myDefence.isInitialised
@@ -273,7 +278,11 @@ export default class OmegaApp extends Component {
             logsAttacker = await this.state.provider.getLogs(filterAttacker);
             logsDefender = await this.state.provider.getLogs(filterDefender);
         } catch (error) {
-            return this.setState(this.defaultLoadedState);
+            return this.setState({
+                ...this.defaultLoadedState,
+                toastOpen: true,
+                toastContent: 'Transaction failed (Get Logs).',
+            });
         }
 
         const logs = logsAttacker.concat(logsDefender);
@@ -286,7 +295,11 @@ export default class OmegaApp extends Component {
         try {
             defenders = await this.state.newOmegaContract.getAllDefenders();
         } catch (error) {
-            return this.setState(this.defaultLoadedState);
+            return this.setState({
+                ...this.defaultLoadedState,
+                toastOpen: true,
+                toastContent: 'Transaction failed (Get All Defenders).',
+            });
         }
 
         this.setState({
@@ -315,7 +328,11 @@ export default class OmegaApp extends Component {
                 metaResult.commanderLhs,
                 metaResult.commanderRhs);
         } catch (error) {
-            return this.setState(this.defaultLoadedState);
+            return this.setState({
+                ...this.defaultLoadedState,
+                toastOpen: true,
+                toastContent: 'Transaction failed (Replay Fight).',
+            });
         }
 
         const _parseHp = (hp) => {
@@ -358,7 +375,11 @@ export default class OmegaApp extends Component {
         try {
             defenders = await this.state.newOmegaContract.getAllDefenders();
         } catch (error) {
-            return this.setState(this.defaultLoadedState);
+            return this.setState({
+                ...this.defaultLoadedState,
+                toastOpen: true,
+                toastContent: 'Transaction failed (Get All Defenders).',
+            });
         }
 
         this.setState({
@@ -369,21 +390,46 @@ export default class OmegaApp extends Component {
     }
 
     async leaderboard() {
+        const filterAllLogs = this.state.newOmegaContract.filters.FightComplete();
+        filterAllLogs.fromBlock = this.state.provider.getBlockNumber().then((b) => b - 100000);
+        filterAllLogs.toBlock = 'latest';
+
         this.setState({
             loading: true,
         });
 
-        let leaderboard;
+        let logs;
 
         try {
-            leaderboard = await this.state.newOmegaContract.getLeaderboard();
+            logs = await this.state.provider.getLogs(filterAllLogs);
         } catch (error) {
-            return this.setState(this.defaultLoadedState);
+            return this.setState({
+                ...this.defaultLoadedState,
+                toastOpen: true,
+                toastContent: 'Transaction failed (Get Leaderboard).',
+            });
+        }
+
+        const logsParsed = _.map(logs, (log) => {
+            return this.state.newOmegaContract.interface.parseLog(log);
+        });
+
+        let defenders;
+
+        try {
+            defenders = await this.state.newOmegaContract.getAllDefenders();
+        } catch (error) {
+            return this.setState({
+                ...this.defaultLoadedState,
+                toastOpen: true,
+                toastContent: 'Transaction failed (Get All Defenders).',
+            });
         }
 
         this.setState({
             mode: Modes.Leaderboard,
-            leaderboard,
+            logs: logsParsed,
+            defenders,
             loading: false,
         });
     }
@@ -506,7 +552,8 @@ export default class OmegaApp extends Component {
                         onCancel={this.genericCancelHandler.bind(this)}/>
                 }
                 {this.state.mode === Modes.Leaderboard &&
-                    <Leaderboard leaderboard={this.state.leaderboard}
+                    <Leaderboard logs={this.state.logs}
+                        defenders={this.state.defenders}
                         onCancel={this.genericCancelHandler.bind(this)}/>
                 }
                 <div
