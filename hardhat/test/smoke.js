@@ -37,19 +37,19 @@ describe("NewOmega", function() {
             max = Math.floor(max);
             return Math.floor(Math.random() * (max - min) + min);
         }
-        const seed = getRandomInt(0, Number.MAX_SAFE_INTEGER);
+        const seed = 1337; //getRandomInt(0, Number.MAX_SAFE_INTEGER);
 
         console.log('Seed ', seed);
 
-        // const result = await newOmega.replay(BigNumber.from(seed), [100,15,15,15], [100,15,15,15], 0, 0);
+        const result = await newOmega.replay(BigNumber.from(seed), [15,15,15,15], [15,15,15,15], 0, 0);
 
-        const result = await newOmega.attack(accounts[0].address, [10,10,10,10], 0);
+        // const result = await newOmega.attack(accounts[0].address, [10,10,10,10], 0);
 
         await new Promise((resolve, reject) => {
             setTimeout(resolve, 5000);
         })
 
-        // console.log('###RESULT ', result);
+        console.log('###RESULT ', result);
 
         // const result2 = await result.wait();
 

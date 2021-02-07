@@ -39,8 +39,8 @@ export const Combat = (props) => {
         _.each(newMeshes, (newMesh) => {
             newMesh.material = new StandardMaterial(_.uniqueId(), scene);
             newMesh.material.diffuseColor = isLhs
-                ? new Color3(0, 1, 0)
-                : new Color3(1, 1, 0)
+                ? new Color3(0.612, 0.8, 0.396)
+                : new Color3(1, 0.79, 0.16)
         });
 
         if (isLhs) {
@@ -253,32 +253,47 @@ export const Combat = (props) => {
         });
     };
 
-    const playMoves = (scene, moves, isLhs, shipHpsLhs, shipHpsRhs) => {
-        const _recursiveMover = (ind, mainResolver) => {
-            const move = moves[ind];
+    const playMove = (scene, move, isLhs, shipHpsLhs, shipHpsRhs) => {
+        let movePromise;
 
-            if (!move) {
+        if (!move) {
+            return new Promise((resolve) => {
+                resolve();
+            });
+        }
+
+        if (move.moveType === 2) {
+            movePromise = moveShips(scene, move, isLhs);
+        } else if (move.moveType === 1) {
+            movePromise = new Promise((resolve, reject) => {
+                showAttacks(scene, move, isLhs);
+                const shipHps = isLhs ? shipHpsRhs : shipHpsLhs;
+                shipHps[move.target] -= move.damage;
+                applyHpsToVisuals(scene, move.target, isLhs, shipHpsLhs,
+                    shipHpsRhs);
+                logAttack(move, isLhs);
+
+                setTimeout(resolve, SHOOT_GAP_MS);
+            });
+        }
+
+        return movePromise;
+    };
+
+    const playMoves = (scene, lhsMoves, rhsMoves, shipHpsLhs, shipHpsRhs) => {
+        const _recursiveMover = (ind, mainResolver) => {
+            const lhsMove = lhsMoves[ind];
+            const rhsMove = rhsMoves[ind];
+
+            if (!lhsMove && !rhsMove) {
                 return mainResolver();
             }
 
-            let movePromise;
-            if (move.moveType === 2) {
-                movePromise = moveShips(scene, move, isLhs);
-            } else if (move.moveType === 1) {
-                movePromise = new Promise((resolve, reject) => {
-                    showAttacks(scene, move, isLhs);
-                    const shipHps = isLhs ? shipHpsRhs : shipHpsLhs;
-                    shipHps[move.target] -= move.damage;
-                    applyHpsToVisuals(scene, move.target, isLhs, shipHpsLhs,
-                        shipHpsRhs);
-                    logAttack(move, isLhs);
+            const movePromiseLhs = playMove(scene, lhsMove, true, shipHpsLhs, shipHpsRhs);
+            const movePromiseRhs = playMove(scene, rhsMove, false, shipHpsLhs, shipHpsRhs);
 
-                    setTimeout(resolve, SHOOT_GAP_MS);
-                });
-            }
-
-            movePromise.then(() => {
-                if (ind + 1 < moves.length) {
+            Promise.all([movePromiseLhs, movePromiseRhs]).then(() => {
+                if (ind + 1 < lhsMoves.length) {
                     _recursiveMover(ind + 1, mainResolver);
                 } else {
                     mainResolver();
@@ -307,11 +322,9 @@ export const Combat = (props) => {
             return move.round === round && move.moveType !== 0;
         });
 
-        playMoves(scene, lhsMoves, true, shipHpsLhs, shipHpsRhs).then(() => {
-            playMoves(scene, rhsMoves, false, shipHpsLhs, shipHpsRhs).then(() => {
-                playRound(scene, round + 1, shipHpsLhs, shipHpsRhs);
-            });
-        })
+        playMoves(scene, lhsMoves, rhsMoves, shipHpsLhs, shipHpsRhs).then(() => {
+            playRound(scene, round + 1, shipHpsLhs, shipHpsRhs);
+        });
     };
 
     const playCombat = (scene) => {

@@ -2,8 +2,6 @@
 pragma solidity >=0.8.0 <0.9.0;
 pragma experimental ABIEncoderV2;
 
-//import "hardhat/console.sol";
-
 struct Move {
   uint8 moveType;
   uint8 round;
@@ -47,8 +45,16 @@ struct FightStateInternal {
   Move[] lhsMoves;
   Move[] rhsMoves;
   uint8 currentShip;
-  bool hasTarget;
-  uint8 target;
+  bool lhsHasTarget;
+  bool rhsHasTarget;
+  uint8 lhsTarget;
+  uint8 rhsTarget;
+  uint32 lhsDamage;
+  uint32 rhsDamage;
+  bool lhsDeadShip;
+  bool rhsDeadShip;
+  int32[] shipHpsLhs;
+  int32[] shipHpsRhs;
 }
 
 struct PlayerDefence {
@@ -57,12 +63,6 @@ struct PlayerDefence {
   uint8[] defenceSelection;
   uint8 commander;
   bytes32 name;
-}
-
-struct PlayerData {
-  bool isInitialised;
-  uint32 wins;
-  uint32 losses;
 }
 
 struct LeaderboardEntry {
@@ -122,9 +122,9 @@ library GameEngineLibrary {
 
     for (int8 enemyShipI = int8(MAX_SHIPS - 1); enemyShipI >= 0; enemyShipI--) {
       uint8 enemyShip = uint8(enemyShipI);
-      uint16 distance = uint16(abs(position - shipPositionsEnemy[enemyShip]));
 
-      if (distance <= Ships[currentShip].range && shipHpsEnemy[enemyShip] > 0) {
+      if (uint16(abs(position - shipPositionsEnemy[enemyShip])) <=
+        Ships[currentShip].range && shipHpsEnemy[enemyShip] > 0) {
         minDistanceIndex = enemyShip;
         break;
       }
@@ -168,8 +168,6 @@ library GameEngineLibrary {
     require(selectionLhs.length == 4, 'Selection needs to have 4 elements');
     require(selectionRhs.length == 4, 'Selection needs to have 4 elements');
 
-//    console.log('pre.init ', gasleft());
-
     int8[] memory shipPositionsLhs = new int8[](MAX_SHIPS);
     shipPositionsLhs[0] = 10;
     shipPositionsLhs[1] = 11;
@@ -182,83 +180,94 @@ library GameEngineLibrary {
     shipPositionsRhs[2] = -12;
     shipPositionsRhs[3] = -13;
 
-    int32[] memory shipHpsLhs = new int32[](MAX_SHIPS);
-    int32[] memory shipHpsRhs = new int32[](MAX_SHIPS);
-    uint16[] memory variables = new uint16[](MAX_SHIPS);
+    FightStateInternal memory fightState;
+    fightState.shipHpsLhs = new int32[](MAX_SHIPS);
+    fightState.shipHpsRhs = new int32[](MAX_SHIPS);
+    uint16[] memory variablesLhs = new uint16[](MAX_SHIPS);
+    uint16[] memory variablesRhs = new uint16[](MAX_SHIPS);
 
     for (uint16 i = 0; i < MAX_SHIPS; i++) {
-      shipHpsLhs[i] = int32(int16(Ships[i].hp * selectionLhs[i]));
-      shipHpsRhs[i] = int32(int16(Ships[i].hp * selectionRhs[i]));
-      variables[i] = uint16(seed % Ships[i].attack.variable);
+      fightState.shipHpsLhs[i] = int32(int16(Ships[i].hp * selectionLhs[i]));
+      fightState.shipHpsRhs[i] = int32(int16(Ships[i].hp * selectionRhs[i]));
+      variablesLhs[i] = uint16(seed % Ships[i].attack.variable);
+      variablesRhs[i] = uint16((seed / 2) % Ships[i].attack.variable);
     }
 
-    FightStateInternal memory fightState;
     if (logMoves) {
       fightState.lhsMoves = new Move[](MAX_ROUNDS * MAX_SHIPS);
       fightState.rhsMoves = new Move[](MAX_ROUNDS * MAX_SHIPS);
     }
 
-//    console.log('post.init ', gasleft());
-
-    for (fightState.round = 0; fightState.round < MAX_ROUNDS && !isDead(shipHpsLhs) && !isDead(shipHpsRhs); fightState.round++) {
-
-//      console.log(fightState.round, ' / ', gasleft());
-
+    for (fightState.round = 0; fightState.round < MAX_ROUNDS && !isDead(fightState.shipHpsLhs) && !isDead(fightState.shipHpsRhs); fightState.round++) {
       for (fightState.currentShip = 0; fightState.currentShip < MAX_SHIPS; fightState.currentShip++) {
-        if (shipHpsLhs[fightState.currentShip] > 0) {
-//          console.log('pre.getTarget ', gasleft());
-          (fightState.hasTarget, fightState.target) = getTarget(
+        fightState.lhsHasTarget = false;
+        fightState.rhsHasTarget = false;
+        fightState.lhsDeadShip = fightState.shipHpsLhs[fightState.currentShip] <= 0;
+        fightState.rhsDeadShip = fightState.shipHpsRhs[fightState.currentShip] <= 0;
+
+        if (!fightState.lhsDeadShip) {
+          (fightState.lhsHasTarget, fightState.lhsTarget) = getTarget(
             Ships, fightState.currentShip, shipPositionsLhs,
-            shipPositionsRhs, shipHpsRhs);
-//          console.log('post.getTarget ', gasleft());
-          if (fightState.hasTarget) {
-//            console.log('pre.calculateDamage ', gasleft());
-            uint32 damage = calculateDamage(variables, Ships, fightState.currentShip, fightState.target,
-              uint32(shipHpsLhs[fightState.currentShip]));
-//            console.log('post.calculateDamage ', gasleft());
-//            console.log('pre.subtraction ', gasleft());
-            shipHpsRhs[uint8(fightState.target)] -= int32(damage);
-//            console.log('post.subtraction ', gasleft());
+            shipPositionsRhs, fightState.shipHpsRhs);
+
+          if (fightState.lhsHasTarget) {
+            fightState.lhsDamage = calculateDamage(variablesLhs,
+              Ships,
+              fightState.currentShip,
+              fightState.lhsTarget,
+              uint32(fightState.shipHpsLhs[fightState.currentShip]));
+
             if (logMoves) {
-              logShoot(fightState.loggedLhsMoves++, fightState.round, fightState.lhsMoves, fightState.currentShip, fightState.target, damage);
+              logShoot(fightState.loggedLhsMoves++, fightState.round, fightState.lhsMoves,
+                fightState.currentShip, fightState.lhsTarget, fightState.lhsDamage);
             }
           } else {
-//            console.log('pre.moveShips ', gasleft());
-            shipPositionsLhs[fightState.currentShip] = maxI(shipPositionsLhs[fightState.currentShip] -
-              int8(uint8(Ships[fightState.currentShip].speed)), -13);
-//            console.log('post.moveShips ', gasleft());
             if (logMoves) {
               logMove(fightState.loggedLhsMoves++, fightState.round, fightState.lhsMoves,
-                fightState.currentShip, shipPositionsLhs[fightState.currentShip]);
+                fightState.currentShip, shipPositionsLhs[fightState.currentShip] -
+                int8(uint8(Ships[fightState.currentShip].speed)));
             }
           }
         }
-      }
 
-      for (fightState.currentShip = 0; fightState.currentShip < MAX_SHIPS; fightState.currentShip++) {
-        if (shipHpsRhs[fightState.currentShip] > 0) {
-          (fightState.hasTarget, fightState.target) = getTarget(
+        if (!fightState.rhsDeadShip) {
+          (fightState.rhsHasTarget, fightState.rhsTarget) = getTarget(
             Ships, fightState.currentShip, shipPositionsRhs,
-            shipPositionsLhs, shipHpsLhs);
-          if (fightState.hasTarget) {
-            uint32 damage = calculateDamage(variables, Ships, fightState.currentShip, fightState.target,
-              uint32(shipHpsRhs[fightState.currentShip]));
-            shipHpsLhs[uint8(fightState.target)] -= int32(damage);
+            shipPositionsLhs, fightState.shipHpsLhs);
+
+          if (fightState.rhsHasTarget) {
+            fightState.rhsDamage = calculateDamage(variablesRhs,
+              Ships,
+              fightState.currentShip,
+              fightState.rhsTarget,
+              uint32(fightState.shipHpsRhs[fightState.currentShip]));
+            fightState.shipHpsLhs[uint8(fightState.rhsTarget)] -= int32(fightState.rhsDamage);
+
             if (logMoves) {
-              logShoot(fightState.loggedRhsMoves++, fightState.round, fightState.rhsMoves, fightState.currentShip, fightState.target, damage);
+              logShoot(fightState.loggedRhsMoves++, fightState.round, fightState.rhsMoves,
+                fightState.currentShip, fightState.rhsTarget, fightState.rhsDamage);
             }
           } else {
-            shipPositionsRhs[fightState.currentShip] = minI(shipPositionsRhs[fightState.currentShip] +
-              int8(uint8(Ships[fightState.currentShip].speed)), 13);
+            shipPositionsRhs[fightState.currentShip] +=
+              int8(uint8(Ships[fightState.currentShip].speed));
+
             if (logMoves) {
-              logMove(fightState.loggedRhsMoves++, fightState.round, fightState.rhsMoves, fightState.currentShip, shipPositionsRhs[fightState.currentShip]);
+              logMove(fightState.loggedRhsMoves++, fightState.round, fightState.rhsMoves,
+                fightState.currentShip, shipPositionsRhs[fightState.currentShip]);
             }
+          }
+        }
+
+        if (!fightState.lhsDeadShip) {
+          if (fightState.lhsHasTarget) {
+            fightState.shipHpsRhs[uint8(fightState.lhsTarget)] -= int32(fightState.lhsDamage);
+          } else {
+            shipPositionsLhs[fightState.currentShip] -=
+              int8(uint8(Ships[fightState.currentShip].speed));
           }
         }
       }
     }
-
-//    console.log('returning result ', gasleft());
 
     return FightResult({
       selectionLhs: selectionLhs,
@@ -267,8 +276,8 @@ library GameEngineLibrary {
       commanderRhs: commanderRhs,
       lhs: fightState.lhsMoves,
       rhs: fightState.rhsMoves,
-      lhsDead: isDead(shipHpsLhs),
-      rhsDead: isDead(shipHpsRhs),
+      lhsDead: isDead(fightState.shipHpsLhs),
+      rhsDead: isDead(fightState.shipHpsRhs),
       rounds: fightState.round,
       seed: seed
     });
@@ -324,8 +333,6 @@ contract NewOmega {
     FightResult result
   );
 
-  mapping(address => PlayerData) playerDataMapping;
-  address[] playerData;
   mapping(address => PlayerDefence) playerDefenceMapping;
   address[] playerDefenders;
 
@@ -351,17 +358,6 @@ contract NewOmega {
       playerDefenders.push(msg.sender);
     }
     playerDefenceMapping[msg.sender] = newDefence;
-
-    if (!playerDataMapping[msg.sender].isInitialised) {
-      PlayerData memory newDataRhs = PlayerData({
-        isInitialised: true,
-        wins: 0,
-        losses: 0
-      });
-
-      playerDataMapping[msg.sender] = newDataRhs;
-      playerData.push(msg.sender);
-    }
   }
 
   function getOwnDefence() public view returns (PlayerDefence memory) {
@@ -374,43 +370,10 @@ contract NewOmega {
 
     uint seed = 12345678; //uint(keccak256(abi.encodePacked(block.difficulty, block.timestamp, msg.sender)));
 
-//    console.log('pre.fight ', gasleft());
-
     FightResult memory result = GameEngineLibrary.fight(seed, false, Ships, selection,
       playerDefenceMapping[enemy].defenceSelection,
       commander, playerDefenceMapping[enemy].commander);
 
-//    console.log('    ### POSTFIGHT ### ', gasleft());
-
-//    console.log('pre.winloss ', gasleft());
-
-    if (result.lhsDead) {
-      playerDataMapping[enemy].wins++;
-      playerDataMapping[msg.sender].losses++;
-    } else if (result.rhsDead) {
-      playerDataMapping[msg.sender].wins++;
-      playerDataMapping[enemy].losses++;
-    }
-
-//    console.log('post.winloss ', gasleft());
-
     emit FightComplete(msg.sender, enemy, result);
-  }
-
-  function getLeaderboard() public view returns (LeaderboardEntry[] memory) {
-    LeaderboardEntry[] memory entries = new LeaderboardEntry[](playerData.length);
-
-    for (uint i = 0; i < playerData.length; i++) {
-      address playerAddress = playerData[i];
-
-      entries[i] = LeaderboardEntry({
-        player: playerAddress,
-        name: playerDefenceMapping[playerAddress].name,
-        wins: playerDataMapping[playerAddress].wins,
-        losses: playerDataMapping[playerAddress].losses
-      });
-    }
-
-    return entries;
   }
 }

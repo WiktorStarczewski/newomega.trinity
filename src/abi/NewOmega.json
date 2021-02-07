@@ -253,41 +253,6 @@
   },
   {
     "inputs": [],
-    "name": "getLeaderboard",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "address",
-            "name": "player",
-            "type": "address"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "name",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "wins",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "losses",
-            "type": "uint32"
-          }
-        ],
-        "internalType": "struct LeaderboardEntry[]",
-        "name": "",
-        "type": "tuple[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "getOwnDefence",
     "outputs": [
       {

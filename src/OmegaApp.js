@@ -35,7 +35,7 @@ const Modes = {
 const TRAINING_SELECTION = [35, 25, 15, 10];
 const DEFAULT_PROVIDER = 'ropsten';
 const INFURA_KEY = 'dbb5964e1c98437389d0c43ee39db58a';
-const CONTRACT_ADDRESS = '0xaa2c8BF9416B5DDCFee2f886214e041dF639EB4a';
+const CONTRACT_ADDRESS = '0xd94805F1Dbae58DDEa5A53F63B2D1991dbF2288c';
 
 
 export default class OmegaApp extends Component {
