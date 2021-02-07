@@ -460,7 +460,7 @@ export default class OmegaApp extends Component {
                             Version: 0.0.1 (c) celrisen.eth
                         </div>
                         <div className="ethBalance uiElement bottomElement">
-                            Ξ{ethBalanceString} Block: {this.state.blockNumber}
+                            Ξ{ethBalanceString} | Network: Elastos Ethereum (Testnet) | Block: {this.state.blockNumber}
                         </div>
                     </div>
                 }
